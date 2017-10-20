@@ -1,0 +1,143 @@
+№,Вопрос,Ответ №1,Ответ №2 ,Ответ №3,Ответ №4,№ правильного ответа
+1,"Какое будет выведено значение?
+
+let x = 5;
+alert( x++ );",null,4,5,6,3
+,"Какое будет выведено значение?
+
+let x = 5;
+alert( ++x );",null,4,5,6,4
+2,"Что выведет этот код?
+
+function F() { return F; }
+
+alert( new F() instanceof F );
+alert( new F() instanceof Function );","false, false ","false, true","true, false","true, true",2
+4,"Что выведет этот код?
+
+for(let key in  {1:1, 0:0}) {
+ alert(key);
+}","1, затем 0.","0, затем 1",В коде ошибка.,Зависит от браузера.,2
+5,"Есть ли разница между выражениями?
+
+!!( a && b )
+(a && b)",да,нет,Зависит от браузера.,Что такое !!,1
+6,"Чему равна длина arr.length массива arr?
+
+let arr = [];
+arr[1] = 1;
+arr[3] = 33;",1,2,3,4,4
+7,"Чему равно a + b + c?
+
+let a = 1;
+let b = { toString() {return '1'} };
+let c = 1;",11[object Object],2[object Object],111,3,3
+8,"Какие из этих вызовов синтаксически верно сгенерируют исключение?
+
+1. throw ""Ошибка""
+2. throw new Error(""Ошибка"")
+3. throw { message: ""Ошибка"" }
+4. throw Error(""Ошибка"")
+
+",1,2,3,4,"1,2,3,4"
+9,Переменные apple и Apple (с большой буквы) – это одна и та же или разные?,Одна и та же.,Разные.,С большой буквы переменные называть нельзя.,"Слово «apple» является зарезервированным, нельзя использовать.",2
+10,"Что выведет этот код?
+
+alert( +""Infinity"" );
+
+",Infinity,NaN,0,Будет ошибка,1
+10,"Что выведет этот код?
+
+for(var i=0; i<10; i++) {
+  setTimeout(function() {
+    alert(i);
+  }, 100);
+}",Числа от 0 до 9.,Числа от 0 до 10.,10 раз число 9.,10 раз число 10.,4
+11,"Что выведет этот код?
+
+for(let i=0; i<10; i++) {
+  setTimeout(function() {
+    alert(i);
+  }, 100);
+}",Числа от 0 до 9.,Числа от 0 до 10.,10 раз число 9.,10 раз число 10.,1
+13,"Чему равен результат вызова в этом примере?
+
+function f() {
+  let a = 5;
+  return new Function('b', 'return a + b');
+}
+
+alert(f()(1));",1,6,undefined,Будет ошибка,4
+14,"Что получится, если сложить true + false?",truefalse,1,0,NaN,2
+15,Чему равна сумма [] + 1 + 2?,1,NaN,12,undefined,3
+,"Чему равна ""1"" + 2 и 1 + ""2""","12, 12","3, 12","12, 3","3, 3",1
+,"Что выведет этот код?
+
+alert(a());
+
+function a () {
+    return 'function a';
+}",function a,undefined,"function() {
+    return 'function a';
+}",Будет ошибка,1
+,"Что выведет этот код?
+
+alert(a());
+
+var a = function() {
+    return 'function a';
+}",function a,undefined,"function() {
+    return 'function a';
+}",Будет ошибка,4
+16,"Что выведет выражение ниже?
+
+let a = new Array(1,2), b = new Array(3);
+alert(a[0] + b[0]);",1,4,NaN,undefined,3
+20,"Что выведет этот код?
+
+let obj = {
+ ""0"": 1,
+ 0: 2
+};
+
+alert( obj[""0""] + obj[0] );",2,3,4,12,3
+21,"Чему равно 'i' в конце кода?
+
+for(var i=0; i<10; i++) {
+  console.log(i);
+}",9,10,undefined,NaN,2
+22,"Что выведет этот код?
+
+(function(){
+    alert(typeof arguments);
+  })();",object,array,arguments,undefined,1
+23,"Что выведет этот код?
+
+function a(){ return 123; };
+alert(typeof a());",number,undefined,function,Будет ошибка,1
+24,"Что выведет этот код?
+
+function a(){ return 123; };
+alert(typeof a);",number,undefined,function,Будет ошибка,3
+25,"Что выведет этот код?
+
+(function f(){
+    function f(){ return 1; }
+    return f();
+    function f(){ return 2; }
+  })();",1,2,undefined,Будет ошибка,2
+26,,,,,,
+27,,,,,,
+28,,,,,,
+29,,,,,,
+30,,,,,,
+31,,,,,,
+32,,,,,,
+33,,,,,,
+34,,,,,,
+35,,,,,,
+36,,,,,,
+37,,,,,,
+38,,,,,,
+39,,,,,,
+40,,,,,,

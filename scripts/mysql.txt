@@ -1,0 +1,3 @@
+
+
+CREATE TABLE `pdffiller_competitions`.`question_options` ( `id` INT NOT NULL AUTO_INCREMENT , `question_id` INT NOT NULL , `text` VARCHAR(300) NOT NULL , `is_correct` BOOLEAN NOT NULL , PRIMARY KEY (`id`), INDEX `question index` (`question_id`)) ENGINE = InnoDB;
