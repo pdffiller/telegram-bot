@@ -170,7 +170,7 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
     if (userData.current_quest_id && progress.some(q => q.text_answer || q.option_id)) {
       await telegramModel.sendMessage(userData.user_id, quest.retry_text);
       if (contextHelper.canAskQuestions(context)) {
-        askQuestionAgain(context);
+        await askQuestionAgain(context);
       }
       return;
     }
