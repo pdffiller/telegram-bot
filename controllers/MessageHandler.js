@@ -175,15 +175,17 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
       return;
     }
 
+    // todo: dbModel.getQuestProgress(user_id, quest_id)
+
     const [ question ] = await dbModel.getQuestions(quest.id, 0);
     const options = await dbModel.getQuestionOptions(question.id);
+
+    userData.current_quest_id = quest.id;
+    userData.current_question_id = question.id;
 
     if (quest.start_text) {
       await telegramModel.sendMessage(userData.user_id, quest.start_text);
     }
-
-    userData.current_quest_id = question.quest_id;
-    userData.current_question_id = question.id;
 
     await dbModel.setUserData(userData);
 

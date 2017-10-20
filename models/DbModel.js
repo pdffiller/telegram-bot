@@ -69,17 +69,19 @@ module.exports = ({ config }) => {
     return new Promise((resolve, reject) => {
 
       const { user_id } = info;
-      const userData  = _.pick(info, ['user_id', 'first_name', 'last_name', 'username', 'current_quest_id', 'current_question_id']);
+      const userData  = _.pick(info, ['first_name', 'last_name', 'username', 'current_quest_id', 'current_question_id']);
 
-      connection.query('update `telegram_users` set ? where ?', [userData, user_id], (err, res) => {
+      connection.query('update `telegram_users` set ? where ?', [userData, { user_id }], (err, res) => {
         resolve(res);
       });
     });
   }
 
-  function addUser(data) {
+  function addUser(info) {
     return new Promise((resolve, reject) => {
-      connection.query('insert into `telegram_users` set ?', data, (err, res) => {
+      const userData  = _.pick(info, ['user_id', 'first_name', 'last_name', 'username', 'current_quest_id', 'current_question_id']);
+
+      connection.query('insert into `telegram_users` set ?', userData, (err, res) => {
         resolve(res);
       });
     });
