@@ -25,10 +25,8 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
       await dbModel.addUser(userData);
     }
 
-    const [quest, progress] = await Promise.all([
-      dbModel.getQuest(),
-      dbModel.getUserProgress(user_id),
-    ]);
+    const quest = await dbModel.getQuest();
+    const progress = await dbModel.getQuestProgress(user_id, quest.id);
 
     const context = {
       userData,
@@ -167,27 +165,27 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
   async function startQuest({ chat, from }, context) {
     const { userData, quest, progress } = context;
 
-    if (userData.current_quest_id && progress.some(q => q.text_answer || q.option_id)) {
-      await telegramModel.sendMessage(userData.user_id, quest.retry_text);
-      if (contextHelper.canAskQuestions(context)) {
-        await askQuestionAgain(context);
-      }
-      return;
-    }
-
-    // todo: dbModel.getQuestProgress(user_id, quest_id)
-
-    const [ question ] = await dbModel.getQuestions(quest.id, 0);
-    const options = await dbModel.getQuestionOptions(question.id);
+    const question = progress[0];
 
     userData.current_quest_id = quest.id;
     userData.current_question_id = question.id;
 
-    if (quest.start_text) {
-      await telegramModel.sendMessage(userData.user_id, quest.start_text);
+    if (contextHelper.hasProgress(context)) {
+      await telegramModel.sendMessage(userData.user_id, quest.retry_text);
+      if (contextHelper.canAskQuestions(context)) {
+        await Promise.all([
+          askQuestionAgain(context),
+          dbModel.setUserData(userData),
+        ])
+      }
+      return;
     }
 
-    await dbModel.setUserData(userData);
+    const [ options ] = await Promise.all([
+      dbModel.getQuestionOptions(question.id),
+      telegramModel.sendMessage(userData.user_id, quest.start_text),
+      dbModel.setUserData(userData),
+    ]);
 
     return askQuestion(userData.user_id, question, options);
   }

@@ -30,10 +30,10 @@ module.exports = {
   },
 
   mysql: {
-    host: 'docker',
+    host: 'db',
     user: 'root',
-    password: 'my-secret-pw',
-    database: 'pdffiller_competitions'
+    password: 'root',
+    database: 'pdffiller_quests'
   },
 
   botId: '<bot_id>',

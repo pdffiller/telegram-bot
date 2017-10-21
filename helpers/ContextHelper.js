@@ -37,10 +37,15 @@ module.exports = () => {
     return context.progress.find(({ id }) => id === context.userData.current_question_id);
   }
 
+  function hasProgress(context) {
+    return context.progress.some(q => q.text_answer || q.option_id);
+  }
+
   return {
     canAskQuestions,
     canAskOptionalQuestions,
     getCurrentQuestion,
     getNextQuestion,
+    hasProgress,
   }
 };
