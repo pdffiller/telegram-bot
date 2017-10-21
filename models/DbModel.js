@@ -2,14 +2,18 @@ const mysql = require('mysql');
 const _ = require('lodash');
 
 
-module.exports = ({ config }) => {
+module.exports = ({ config, logger }) => {
 
   const connection = mysql.createConnection(config.mysql);
 
-  const toPromise = (resolve, reject) => (err, res) => !err ? resolve(res) : reject(err);
   const query = (sql, values = []) =>
-    new Promise((resolve, reject) =>
-      connection.query(sql, values, toPromise(resolve, reject)));
+    new Promise((resolve, reject) => connection.query(sql, values, (err, res) => {
+      if (!err) resolve(res);
+      else {
+        logger.error({ sql, values, err, });
+        reject(err);
+      }
+    }));
 
   async function getQuest(id) {
     const sql = 'select * from `quests` where ' +

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+file=$1
+
+command=${@:2}
+
+while [ ! -f ${file} ]; do
+    echo "waiting fo consul-template to render..."
+    sleep 0.5
+done
+
+${command}

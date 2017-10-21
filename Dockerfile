@@ -15,5 +15,6 @@ COPY package.json package.json
 RUN npm i
 
 COPY . .
+COPY scripts/wait /usr/bin/wait
 
-CMD pm2-docker start config/pm2.config.js
+CMD ["wait", "config/local.js", "pm2-docker", "start", "config/pm2.config.js"]

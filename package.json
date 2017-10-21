@@ -21,6 +21,7 @@
     "mysql": "^2.15.0",
     "node-sass-middleware": "0.9.8",
     "request": "latest",
-    "serve-favicon": "~2.4.2"
+    "serve-favicon": "~2.4.2",
+    "winston": "^2.4.0"
   }
 }

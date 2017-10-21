@@ -36,6 +36,10 @@ module.exports = {
     database: 'pdffiller_quests'
   },
 
+  logger: {
+    path: 'log'
+  },
+
   botId: '<bot_id>',
 
 };
