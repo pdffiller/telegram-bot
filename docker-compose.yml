@@ -1,20 +1,21 @@
 version: '3.1'
 
 services:
-#  telegram-bot:
-#    build:
-#      context: .
-#    ports:
-#    - "80:3000"
-#    environment:
-#    - CONSUL_HTTP_ADDR=consul:8500
-#    - REGION=us-east-1
-#    - SERVICE_NAME=dev-ws-pdf-services-main
-#    - SERVICE_ENV=dev
-#    - PORT=3000
-#    depends_on:
-#      - consul
-#      - db
+  tg-bot:
+    image: tg-chat
+    build:
+      context: .
+    ports:
+    - "80:3000"
+    environment:
+    - CONSUL_HTTP_ADDR=consul:8500
+    - service_REGION=us-east-1
+    - SERVICE_NAME=dev-ws-pdf-services-main
+    - SERVICE_ENV=dev
+    - PORT=3000
+    depends_on:
+      - consul
+      - db
 
   db:
     image: mysql:5.7
@@ -27,3 +28,8 @@ services:
     image: phpmyadmin/phpmyadmin
     ports:
       - "8081:80"
+
+  consul:
+    image: consul
+    ports:
+      - "8500:8500"
