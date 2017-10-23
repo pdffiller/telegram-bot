@@ -2,6 +2,7 @@
 .idea/
 npm-debug.log
 
+log/*.json
 node_modules/
 
 config/local*

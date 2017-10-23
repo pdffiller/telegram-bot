@@ -30,7 +30,7 @@ module.exports = {
   },
 
   mysql: {
-    host: 'db',
+    host: 'docker',
     user: 'root',
     password: 'root',
     database: 'pdffiller_quests'

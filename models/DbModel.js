@@ -73,6 +73,18 @@ module.exports = ({ config, logger }) => {
     return query(sql, [user_id, quest_id]);
   }
 
+  async function getQuestResults(quest_id) {
+    const sql = 'SELECT ' +
+      'qa.user_id, qq.id as question_id, qq.question_text, qa.text_answer, qo.text as option_text, qq.is_required, qq.type, qo.is_correct ' +
+      'FROM `question_answers` AS `qa` ' +
+      'LEFT JOIN `quest_questions` as `qq` on qq.id=qa.question_id ' +
+      'LEFT JOIN `question_options` as `qo` on qa.option_id=qo.id ' +
+      'WHERE qa.quest_id = ? ORDER BY qa.user_id asc, qq.order asc';
+
+    const allAnswers = await query(sql, [quest_id]);
+    return _.groupBy(allAnswers, 'user_id');
+  }
+  
   return {
     getQuestionOptions,
     getQuestions,
@@ -83,5 +95,6 @@ module.exports = ({ config, logger }) => {
     addUser,
     clearUserProgress,
     getQuestProgress,
+    getQuestResults,
   };
 };

@@ -1,26 +1,20 @@
 version: '3.1'
 
 services:
-  telegram-bot:
-    build:
-      context: .
-#      dockerfile: ./dockerfiles/ws-pdf-services/Dockerfile
-    ports:
-    - "80:3000"
-    environment:
-    - CONSUL_HTTP_ADDR=consul:8500
-    - REGION=us-east-1
-    - SERVICE_NAME=dev-ws-pdf-services-main
-    - SERVICE_ENV=dev
-    - PORT=3000
-    depends_on:
-      - consul
-      - db
-
-  redis:
-    image: redis
-    ports:
-    - "6379:6379"
+#  telegram-bot:
+#    build:
+#      context: .
+#    ports:
+#    - "80:3000"
+#    environment:
+#    - CONSUL_HTTP_ADDR=consul:8500
+#    - REGION=us-east-1
+#    - SERVICE_NAME=dev-ws-pdf-services-main
+#    - SERVICE_ENV=dev
+#    - PORT=3000
+#    depends_on:
+#      - consul
+#      - db
 
   db:
     image: mysql:5.7
@@ -31,12 +25,5 @@ services:
 
   pma:
     image: phpmyadmin/phpmyadmin
-#    environment:
-#      PMA_HOST: mysql
     ports:
       - "8081:80"
-
-  consul:
-    image: consul
-    ports:
-    - "8500:8500"

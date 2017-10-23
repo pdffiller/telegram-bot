@@ -23,7 +23,7 @@ module.exports = ({ config }) => {
     ]
   });
 
-  function log(level, payload = {}, meta = {}) {
+  function log(level, payload, meta = {}) {
     logger.log(level, _.assign(payload, {
       app: 'telegram-chat-bot',
     }, meta))

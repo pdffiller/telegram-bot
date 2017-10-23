@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const sassMiddleware = require('node-sass-middleware');
 
-module.exports = ({ config, indexRoute, webHookRoute }) => {
+module.exports = ({ config, indexRoute, webHookRoute, apiRoute}) => {
   const app = express();
 
   // view engine setup
@@ -23,6 +23,7 @@ module.exports = ({ config, indexRoute, webHookRoute }) => {
   app.use(express.static(path.join(__dirname, 'public')));
 
   app.use('/', indexRoute);
+  app.use('/api', apiRoute);
   app.use('/handleUpdate', webHookRoute);
 
   // catch 404 and forward to error handler
