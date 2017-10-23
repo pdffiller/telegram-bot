@@ -6,6 +6,9 @@ WORKDIR /src/chat-bot
 
 VOLUME /var/log/nodejs
 
+COPY dockerfiles/jsfiller3/pm2-start.sh /usr/bin/pm2-start
+COPY consul-template /usr/bin/consul-template
+
 RUN npm i -g pm2
 
 ARG BUILD_ID
@@ -17,4 +20,4 @@ RUN npm i
 COPY . .
 COPY scripts/wait /usr/bin/wait
 
-CMD ["wait", "config/local.js", "pm2-docker", "start", "config/pm2.config.js"]
+CMD ["pm2-start", "config/pm2.config.js"]
