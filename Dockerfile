@@ -6,7 +6,7 @@ WORKDIR /src/chat-bot
 
 VOLUME /var/log/nodejs
 
-COPY dockerfiles/jsfiller3/pm2-start.sh /usr/bin/pm2-start
+COPY scripts/pm2-start.sh /usr/bin/pm2-start
 COPY consul-template /usr/bin/consul-template
 
 RUN npm i -g pm2
