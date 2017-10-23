@@ -3,6 +3,8 @@ FROM node:8.7
 RUN mkdir -p /src/chat-bot
 WORKDIR /src/chat-bot
 
+EXPOSE 3000
+
 VOLUME /var/log/nodejs
 
 COPY scripts/pm2-start.sh /usr/bin/pm2-start
