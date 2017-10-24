@@ -6,7 +6,7 @@ module.exports = {
   mysql: {
     host: '{{ executeTemplate "dbKey" "host" }}',
     port: '{{ executeTemplate "dbKey" "port" }}',
-    user: '{{ executeTemplate "appKey" "mysql/database" }}',
+    database: '{{ executeTemplate "appKey" "mysql/database" }}',
     user: '{{ executeTemplate "appKey" "mysql/user" }}',
     password: '{{ executeTemplate "appKey" "mysql/password" }}',
   },
