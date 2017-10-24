@@ -26,6 +26,10 @@ module.exports = ({ config, indexRoute, webHookRoute, apiRoute}) => {
   app.use('/api', apiRoute);
   app.use('/handleUpdate', webHookRoute);
 
+  app.use('/status', (req, res) => {
+    res.status(200).send('OK');
+  });
+
   // catch 404 and forward to error handler
   app.use(function(req, res, next) {
     const err = new Error('Not Found');
