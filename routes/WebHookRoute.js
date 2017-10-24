@@ -10,8 +10,11 @@ module.exports = ({ messageHandler }) => {
 
     // start handling messages
     if (message) {
+      res.send('ok');
       return messageHandler.handleUpdate(message)
     }
+
+    res.send('no message');
   });
 
   return router;
