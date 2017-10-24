@@ -35,9 +35,11 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
     };
 
     if (entities) {
-      return entities
+      const consumed = entities
         .map(({ offset, length }) => text.slice(offset, offset+length))
-        .forEach(_.curry(runCommand)(message, context));
+        .every(_.curry(runCommand)(message, context));
+
+      if (consumed) return;
     }
 
     if (userData.current_question_id) {
@@ -61,7 +63,11 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
   function runCommand(message, context, command) {
     switch (command) {
       case COMMAND.START:
-        return startQuest(message, context);
+        startQuest(message, context);
+        return true;
+
+      default:
+        return false;
     }
   }
 
