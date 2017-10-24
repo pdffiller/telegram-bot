@@ -20,6 +20,14 @@ module.exports = ({ config }) => {
         level: 'error',
         json: true,
       })
+    ],
+    exceptionHandlers: [
+      new winston.transports.File({
+        name: 'error-file',
+        filename: path.resolve(config.logger.path, 'tg-chat-uncaught-errors.json'),
+        level: 'error',
+        json: true,
+      })
     ]
   });
 
