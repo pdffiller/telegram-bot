@@ -1,0 +1,13 @@
+
+{{ define "appKey" }}{{ key (printf "%s/apps/%s/%s/%s" (env "SERVICE_REGION" ) (env "SERVICE_NAME") (env "SERVICE_ENV") .) }}{{ end }}
+{{ define "dbKey" }}{{ key (printf "%s/AWS-services/RDS/mysql/dev-kharkivjs-tg-bot/%s" (env "SERVICE_REGION" ) .) }}{{ end }}
+
+module.exports = {
+  mysql: {
+    host: '{{ executeTemplate "dbKey" "host" }}',
+    port: '{{ executeTemplate "dbKey" "port" }}',
+    user: '{{ executeTemplate "appKey" "mysql/user" }}',
+    password: '{{ executeTemplate "appKey" "mysql/password" }}',
+  },
+  botId: '{{ executeTemplate "appKey" "botId" }}'
+}
