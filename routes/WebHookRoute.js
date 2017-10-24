@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-module.exports = () => {
+module.exports = ({ messageHandler }) => {
   /**
    * Endpoint for WebHook POST request
    */
@@ -10,7 +10,7 @@ module.exports = () => {
 
     // start handling messages
     if (message) {
-      // todo: handle telegram message
+      return messageHandler.handleUpdate(message)
     }
   });
 
