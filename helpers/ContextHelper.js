@@ -17,7 +17,10 @@ module.exports = () => {
       }
     });
 
-    const canAskOptionalQuestion = questionsLeft - requiredQuestionsLeft > 0 && optionalQuestionsLeft > 0;
+    const nextQuestion = getNextQuestion(context);
+
+    const canAskOptionalQuestion = (!nextQuestion || !nextQuestion.is_required )
+      && questionsLeft - requiredQuestionsLeft > 0 && optionalQuestionsLeft > 0;
 
     // const nextQuestion = context.progress.find((question, i, arr) => arr[i-1] && arr[i-1].id === context.userData.current_question_id);
 
