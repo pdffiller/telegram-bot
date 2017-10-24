@@ -17,12 +17,10 @@ module.exports = () => {
       }
     });
 
-    const nextQuestion = getNextQuestion(context);
-
+    const nextQuestion = context.progress.find((question, i, arr) => arr[i-1] && arr[i-1].id === context.userData.current_question_id);
     const canAskOptionalQuestion = (!nextQuestion || !nextQuestion.is_required )
       && questionsLeft - requiredQuestionsLeft > 0 && optionalQuestionsLeft > 0;
 
-    // const nextQuestion = context.progress.find((question, i, arr) => arr[i-1] && arr[i-1].id === context.userData.current_question_id);
 
     return canAskOptionalQuestion;
   }
@@ -32,7 +30,7 @@ module.exports = () => {
     return answeredQuestions < context.quest.max_questions && answeredQuestions < context.progress.length;
   }
 
-  function getNextQuestion(context) {
+  function getNextRequiredQuestion(context) {
     return context.progress.find(({ option_id, text_answer, is_required }) => is_required && !option_id && !text_answer);
   }
 
@@ -48,7 +46,7 @@ module.exports = () => {
     canAskQuestions,
     canAskOptionalQuestions,
     getCurrentQuestion,
-    getNextQuestion,
+    getNextRequiredQuestion,
     hasProgress,
   }
 };

@@ -48,7 +48,7 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
       if (!questionAnswered) return;
 
       if (contextHelper.canAskQuestions(context)) {
-        if (contextHelper.canAskOptionalQuestions(context)) await askOptionalQuestion(context)
+        if (contextHelper.canAskOptionalQuestions(context)) await askOptionalQuestion(context);
         else await askNextRequiredQuestion(context);
       } else {
         await finalizeQuest(context);
@@ -112,7 +112,7 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
   async function askNextRequiredQuestion(context) {
     const { user_id } = context.userData;
 
-    const nextQuestion = contextHelper.getNextQuestion(context);
+    const nextQuestion = contextHelper.getNextRequiredQuestion(context);
 
     const options = await dbModel.getQuestionOptions(nextQuestion.id);
 
