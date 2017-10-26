@@ -85,16 +85,18 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
     switch (currentQuestion.type) {
       case QUESTION_TYPE.SELECT:
         const options = await dbModel.getQuestionOptions(current_question_id);
-        const correctOption = options.find(option => text === option.text);
+        const matchingOption = options.find(option => text === option.text);
 
-        if (correctOption) {
-          currentQuestion.option_id = correctOption.id;
+        if (matchingOption) {
+
+          currentQuestion.option_id = matchingOption.id;
+          currentQuestion.is_correct = matchingOption.is_correct;
 
           return dbModel.addQuestionAnswer({
             user_id,
             quest_id: current_quest_id,
             question_id: current_question_id,
-            option_id: correctOption.id
+            option_id: matchingOption.id
           });
         } else {
           await telegramModel.sendMessage(user_id, render(context.quest.error_text, context));
