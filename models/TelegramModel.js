@@ -17,9 +17,18 @@ module.exports = ({ config }) => {
       })
   }
 
-  function createKeyboard(objects, textParam, one_time_keyboard = true) {
-    const keyboard = objects.map(obj => [{ text: obj[textParam] }])
+  function keyboardFromOptions(options, one_time_keyboard = true) {
+    const keyboard = options.map(({ text }) => [{ text }]);
     return JSON.stringify({ keyboard, one_time_keyboard });
+  }
+  
+  function contactRequestKeyboard(text = 'отправить номер') {
+    return JSON.stringify({
+      keyboard: [
+        [{ text, request_contact: true }]
+      ],
+      one_time_keyboard: true,
+    })
   }
 
   function sendMessage(chat_id, text, reply_markup) {
@@ -42,7 +51,8 @@ module.exports = ({ config }) => {
   return {
     getUpdates,
     sendMessage,
-    createKeyboard,
-    toUserData
+    keyboardFromOptions,
+    toUserData,
+    contactRequestKeyboard
   }
 };

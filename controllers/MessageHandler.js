@@ -7,16 +7,21 @@ const COMMAND = {
 const QUESTION_TYPE = {
   SELECT: 'select',
   TEXT: 'text',
+  CONTACT: 'contact',
+  NAME: 'name',
+  EMAIL: 'email',
 };
 
 module.exports = ({ telegramModel, dbModel, contextHelper }) => {
-  
+
+  const { render, canAskQuestions, canAskOptionalQuestions, getCurrentQuestion, getNextRequiredQuestion } = contextHelper;
+
   async function handleUpdate(message) {
     console.time('handleUpdate');
-    const { from, text, entities } = message;
+    const { from, text, entities, contact } = message;
     const user_id = from.id;
 
-    if (!text) return;
+    if (!text && !contact) return;
 
     let userData = await dbModel.getUserData(user_id);
 
@@ -47,14 +52,14 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
 
       if (!questionAnswered) return;
 
-      if (contextHelper.canAskQuestions(context)) {
-        if (contextHelper.canAskOptionalQuestions(context)) await askOptionalQuestion(context);
+      if (canAskQuestions(context)) {
+        if (canAskOptionalQuestions(context)) await askOptionalQuestion(context);
         else await askNextRequiredQuestion(context);
       } else {
         await finalizeQuest(context);
       }
     } else {
-      telegramModel.sendMessage(user_id, quest.help_text);
+      telegramModel.sendMessage(user_id, render(quest.help_text, context));
     }
 
     console.timeEnd('handleUpdate');
@@ -71,50 +76,70 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
     }
   }
 
-  async function handleAnswer({ text, chat }, context) {
-    const { current_question_id, current_quest_id, question_type } = context.userData;
+  async function handleAnswer({ text, chat, contact, entities = [] }, context) {
+    const { current_question_id, current_quest_id } = context.userData;
     const { user_id } = context.userData;
 
-    const currentQuestion = contextHelper.getCurrentQuestion(context);
+    const currentQuestion = getCurrentQuestion(context);
 
-    if (question_type === QUESTION_TYPE.SELECT) {
-      const options = await dbModel.getQuestionOptions(current_question_id);
-      const correctOption = options.find(option => text === option.text);
+    switch (currentQuestion.type) {
+      case QUESTION_TYPE.SELECT:
+        const options = await dbModel.getQuestionOptions(current_question_id);
+        const correctOption = options.find(option => text === option.text);
 
-      if (correctOption) {
-        currentQuestion.option_id = correctOption.id;
+        if (correctOption) {
+          currentQuestion.option_id = correctOption.id;
+
+          return dbModel.addQuestionAnswer({
+            user_id,
+            quest_id: current_quest_id,
+            question_id: current_question_id,
+            option_id: correctOption.id
+          });
+        } else {
+          await telegramModel.sendMessage(user_id, render(context.quest.error_text, context));
+          return askQuestionAgain(context) && false;
+        }
+
+      case QUESTION_TYPE.EMAIL:
+        const emailEntity = _.find(entities, { type: 'email' });
+        if (!emailEntity) {
+          await telegramModel.sendMessage(user_id, render(context.quest.error_text, context));
+          return askQuestionAgain(context) && false;
+        }
+        text = text.substr(emailEntity.offset, emailEntity.length);
+
+      case QUESTION_TYPE.NAME:
+      case QUESTION_TYPE.TEXT:
+        currentQuestion.text_answer = text;
 
         return dbModel.addQuestionAnswer({
-          user_id,
+          user_id: chat.id,
           quest_id: current_quest_id,
           question_id: current_question_id,
-          option_id: correctOption.id
+          text_answer: text
         });
-      } else {
-        const optionsKeyboard = telegramModel.createKeyboard(options, 'text');
-        telegramModel.sendMessage(user_id, context.quest.error_text, optionsKeyboard);
-        return false;
-      }
-    }
 
-    if (question_type === QUESTION_TYPE.TEXT) {
-      currentQuestion.text_answer = text;
+      case QUESTION_TYPE.CONTACT:
+        if (!contact) {
+          await telegramModel.sendMessage(user_id, context.quest.error_text);
+          return true;
+        }
+        currentQuestion.text_answer = contact.phone_number;
 
-      return dbModel.addQuestionAnswer({
-        user_id: chat.id,
-        quest_id: current_quest_id,
-        question_id: current_question_id,
-        text_answer: text
-      });
+        return dbModel.addQuestionAnswer({
+          user_id: chat.id,
+          quest_id: current_quest_id,
+          question_id: current_question_id,
+          text_answer: contact.phone_number
+        });
     }
   }
 
   async function askNextRequiredQuestion(context) {
     const { user_id } = context.userData;
 
-    const nextQuestion = contextHelper.getNextRequiredQuestion(context);
-
-    const options = await dbModel.getQuestionOptions(nextQuestion.id);
+    const nextQuestion = getNextRequiredQuestion(context);
 
     await dbModel.setUserData({
       current_question_id: nextQuestion.id,
@@ -123,18 +148,16 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
 
     context.userData.current_question_id = nextQuestion.id;
 
-    return askQuestion(user_id, nextQuestion, options);
+    return askQuestion(user_id, nextQuestion, context);
   }
 
   async function askQuestionAgain(context) {
     const { userData } = context;
     const { current_question_id, user_id } = userData;
     if (current_question_id) {
-      const currentQuestion = contextHelper.getCurrentQuestion(context);
+      const currentQuestion = getCurrentQuestion(context);
       if (currentQuestion) {
-        const options = await dbModel.getQuestionOptions(currentQuestion.id);
-
-        askQuestion(user_id, currentQuestion, options);
+        return askQuestion(user_id, currentQuestion, context);
       }
     }
   }
@@ -146,7 +169,6 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
     const randomQuestionIndex = Math.floor(Math.random() * randomQuestions.length);
 
     const question = randomQuestions[randomQuestionIndex];
-    const options = await dbModel.getQuestionOptions(question.id);
     const { user_id } = context.userData;
 
     context.userData.current_quest_id = question.quest_id;
@@ -154,10 +176,11 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
 
     await dbModel.setUserData(context.userData);
 
-    return askQuestion(user_id, question, options)
+    return askQuestion(user_id, question, context)
   }
 
-  async function finalizeQuest({ userData, quest }) {
+  async function finalizeQuest(context) {
+    const { userData, quest } = context;
     const { user_id} = userData;
     const { end_text } = quest;
 
@@ -165,7 +188,7 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
     userData.current_quest_id = 0;
     await dbModel.setUserData(userData);
 
-    return telegramModel.sendMessage(user_id, end_text);
+    return telegramModel.sendMessage(user_id, render(end_text, context));
   }
 
   async function startQuest({ chat, from }, context) {
@@ -177,8 +200,8 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
     userData.current_question_id = question.id;
 
     if (contextHelper.hasProgress(context)) {
-      await telegramModel.sendMessage(userData.user_id, quest.retry_text);
-      if (contextHelper.canAskQuestions(context)) {
+      await telegramModel.sendMessage(userData.user_id, render(quest.retry_text, context));
+      if (canAskQuestions(context)) {
         await Promise.all([
           askQuestionAgain(context),
           dbModel.setUserData(userData),
@@ -187,18 +210,33 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
       return;
     }
 
-    const [ options ] = await Promise.all([
-      dbModel.getQuestionOptions(question.id),
-      telegramModel.sendMessage(userData.user_id, quest.start_text),
+    await Promise.all([
+      telegramModel.sendMessage(userData.user_id, render(quest.start_text, context), telegramModel.contactRequestKeyboard()),
       dbModel.setUserData(userData),
     ]);
 
-    return askQuestion(userData.user_id, question, options);
+    return askQuestion(userData.user_id, question, context);
   }
 
-  function askQuestion(user_id, question, options) {
-    const optionsKeyboard = telegramModel.createKeyboard(options, 'text');
-    return telegramModel.sendMessage(user_id, question.question_text, optionsKeyboard);
+  async function askQuestion(user_id, question, context) {
+    let keyboard;
+    switch (question.type) {
+      case QUESTION_TYPE.SELECT:
+        const options = await dbModel.getQuestionOptions(question.id);
+        keyboard = telegramModel.keyboardFromOptions(options);
+        break;
+
+      case QUESTION_TYPE.CONTACT:
+        keyboard = telegramModel.contactRequestKeyboard();
+        break;
+
+      case QUESTION_TYPE.NAME:
+        const { first_name, last_name } = context.userData;
+        keyboard = JSON.stringify({ keyboard: [[{ text: `${last_name} ${first_name}`}]]});
+        break;
+    }
+
+    return telegramModel.sendMessage(user_id, render(question.question_text, context), keyboard);
   }
 
   return {

@@ -31,8 +31,7 @@ module.exports = ({ config, logger }) => {
   }
   
   async function getUserData(user_id) {
-    const sql = 'select tu.*, qq.type as question_type from `telegram_users` as tu ' +
-      'left join quest_questions as qq on tu.current_question_id = qq.id where ?';
+    const sql = 'select * from `telegram_users` where ?';
     const users = await query(sql, { user_id });
     return users.pop();
   }
@@ -67,8 +66,9 @@ module.exports = ({ config, logger }) => {
   }
 
   function getQuestProgress(user_id, quest_id) {
-    const sql = 'select qq.*, qa.option_id, qa.text_answer from quest_questions as qq ' +
+    const sql = 'select qq.*, qa.option_id, qo.is_correct, qa.text_answer from quest_questions as qq ' +
       'left join question_answers as qa on qq.id = qa.question_id and qa.user_id = ? ' +
+      'left join question_options as qo on qa.option_id = qo.id and qq.id = qo.question_id ' +
       'where qq.quest_id = ? order by qq.order asc';
     return query(sql, [user_id, quest_id]);
   }

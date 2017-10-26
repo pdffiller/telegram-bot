@@ -1,3 +1,6 @@
+const ejs = require('ejs');
+const _ = require('lodash');
+
 module.exports = () => {
 
   function canAskOptionalQuestions(context) {
@@ -17,12 +20,27 @@ module.exports = () => {
       }
     });
 
+    const currentQuestion = getCurrentQuestion(context);
     const nextQuestion = context.progress.find((question, i, arr) => arr[i-1] && arr[i-1].id === context.userData.current_question_id);
-    const canAskOptionalQuestion = (!nextQuestion || !nextQuestion.is_required )
+    const canAskOptionalQuestion = (!nextQuestion || !nextQuestion.is_required || !currentQuestion.is_required)
       && questionsLeft - requiredQuestionsLeft > 0 && optionalQuestionsLeft > 0;
 
-
     return canAskOptionalQuestion;
+  }
+
+  function ejsContext({ progress }) {
+    return {
+      answers: {
+        correct: _.filter(progress, 'is_correct').length,
+        incorrect: _.filter(progress, { is_correct: 0 }).length,
+        total: _.filter(progress, 'option_id').length,
+      }
+    }
+  }
+
+  function render(text, context) {
+    const fullContext = Object.assign({}, context, ejsContext(context));
+    return ejs.render(text, fullContext);
   }
 
   function canAskQuestions(context) {
@@ -48,5 +66,6 @@ module.exports = () => {
     getCurrentQuestion,
     getNextRequiredQuestion,
     hasProgress,
+    render,
   }
 };

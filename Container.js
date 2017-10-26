@@ -5,6 +5,6 @@ const container = awilix.createContainer();
 container.registerValue('config', config);
 container.loadModules(config.awilix.modules, config.awilix.options);
 
-// container.resolve('updatesHandler').run();
+if (process.env.GET_UPDATES === 'true') container.resolve('updatesHandler').run();
 
 module.exports = container;
