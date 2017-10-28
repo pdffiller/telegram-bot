@@ -27,5 +27,15 @@ module.exports = ({ restController }) => {
     csv.stringify(csvResults, (err, data) => res.send(data));
   });
 
+  router.post('/addUserAnswer', async (req, res) => {
+    const result = await restController.addQuestionAnswer(req.body);
+    res.send(`ok, ${result.insertId}`);
+  });
+
+  router.post('/setProgress', async (req, res) => {
+    await restController.setProgress(req.body);
+    res.send(`ok`);
+  });
+
   return router;
 };
