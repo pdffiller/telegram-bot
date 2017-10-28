@@ -53,8 +53,7 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
       if (!questionAnswered) return;
 
       if (canAskQuestions(context)) {
-        if (canAskOptionalQuestions(context)) await askOptionalQuestion(context);
-        else await askNextRequiredQuestion(context);
+        await askNextQuestion(context)
       } else {
         await finalizeQuest(context);
       }
@@ -63,6 +62,11 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
     }
 
     console.timeEnd('handleUpdate');
+  }
+
+  async function askNextQuestion(context) {
+    if (canAskOptionalQuestions(context)) await askOptionalQuestion(context);
+    else await askNextRequiredQuestion(context);
   }
 
   function runCommand(message, context, command) {
@@ -196,21 +200,19 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
   async function startQuest({ chat, from }, context) {
     const { userData, quest, progress } = context;
 
+    if (contextHelper.hasProgress(context)) {
+      await telegramModel.sendMessage(userData.user_id, render(quest.retry_text, context));
+
+      if (canAskQuestions(context)) {
+        await askNextQuestion(context)
+      }
+      return;
+    }
+
     const question = progress[0];
 
     userData.current_quest_id = quest.id;
     userData.current_question_id = question.id;
-
-    if (contextHelper.hasProgress(context)) {
-      await telegramModel.sendMessage(userData.user_id, render(quest.retry_text, context));
-      if (canAskQuestions(context)) {
-        await Promise.all([
-          askQuestionAgain(context),
-          dbModel.setUserData(userData),
-        ])
-      }
-      return;
-    }
 
     await Promise.all([
       telegramModel.sendMessage(userData.user_id, render(quest.start_text, context), telegramModel.contactRequestKeyboard()),
