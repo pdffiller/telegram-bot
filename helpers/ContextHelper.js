@@ -22,7 +22,9 @@ module.exports = () => {
 
     const currentQuestion = getCurrentQuestion(context);
     const nextQuestion = context.progress.find((question, i, arr) => arr[i-1] && arr[i-1].id === context.userData.current_question_id);
-    const canAskOptionalQuestion = (!nextQuestion || !nextQuestion.is_required || !currentQuestion.is_required)
+    const nextRequiredQuestion = getNextRequiredQuestion(context);
+
+    const canAskOptionalQuestion = (!nextRequiredQuestion || !nextQuestion || !nextQuestion.is_required || !currentQuestion.is_required)
       && questionsLeft - requiredQuestionsLeft > 0 && optionalQuestionsLeft > 0;
 
     return canAskOptionalQuestion;

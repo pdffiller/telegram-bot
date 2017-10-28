@@ -53,7 +53,7 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
       if (!questionAnswered) return;
 
       if (canAskQuestions(context)) {
-        await askNextQuestion(context)
+        await askNextQuestion(context);
       } else {
         await finalizeQuest(context);
       }
@@ -65,8 +65,11 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
   }
 
   async function askNextQuestion(context) {
-    if (canAskOptionalQuestions(context)) await askOptionalQuestion(context);
-    else await askNextRequiredQuestion(context);
+    if (canAskOptionalQuestions(context)) {
+      await askOptionalQuestion(context);
+    } else {
+      await askNextRequiredQuestion(context);
+    }
   }
 
   function runCommand(message, context, command) {
@@ -169,6 +172,11 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
   }
 
   async function askOptionalQuestion(context) {
+
+    const currentQuestion = getCurrentQuestion(context);
+
+    if (currentQuestion && !currentQuestion.option_id) return askQuestionAgain(context);
+
     const randomQuestions = context.progress.filter(question => {
       return !question.is_required && !question.option_id && !question.text_answer
     });
