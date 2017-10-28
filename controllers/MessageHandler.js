@@ -175,7 +175,7 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
 
     const currentQuestion = getCurrentQuestion(context);
 
-    if (currentQuestion && !currentQuestion.option_id) return askQuestionAgain(context);
+    if (currentQuestion && !currentQuestion.option_id && !currentQuestion.text_answer) return askQuestionAgain(context);
 
     const randomQuestions = context.progress.filter(question => {
       return !question.is_required && !question.option_id && !question.text_answer
