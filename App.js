@@ -27,7 +27,7 @@ module.exports = ({ config, indexRoute, webHookRoute, apiRoute}) => {
   app.use('/handleUpdate', webHookRoute);
 
   app.use('/status', (req, res) => {
-    res.status(200).send('OK');
+    res.status(200).send(`OK, ${process.env.BUILD_ID}`);
   });
 
   // catch 404 and forward to error handler
