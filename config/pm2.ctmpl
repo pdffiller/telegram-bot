@@ -1,0 +1,12 @@
+{{ define "appKey" }}{{ key (printf "%s/apps/%s/%s/%s" (env "SERVICE_REGION" ) (env "SERVICE_NAME") (env "SERVICE_ENV") .) }}{{ end }}
+{{ define "dbKey" }}{{ key (printf "%s/AWS-services/RDS/mysql/dev-kharkivjs-tg-bot/%s" (env "SERVICE_REGION" ) .) }}{{ end }}
+
+module.exports = {
+  apps: [{
+    name: 'chat-service',
+    script: 'bin/www',
+    env: {
+      'NODE_ENV': '{{ executeTemplate "appKey" "env" }}'
+    }
+  }]
+};

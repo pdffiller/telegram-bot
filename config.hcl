@@ -1,5 +1,5 @@
 
 template {
-  source = "config/consul.ctmpl"
+  source = "config/local.ctmpl"
   destination = "config/local.js"
 }

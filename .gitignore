@@ -6,4 +6,4 @@ consul-template
 log/*.json
 node_modules/
 
-config/local*
+config/local.js*
