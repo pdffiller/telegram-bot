@@ -10,6 +10,7 @@ const QUESTION_TYPE = {
   CONTACT: 'contact',
   NAME: 'name',
   EMAIL: 'email',
+  GOTO: 'goto',
 };
 
 module.exports = ({ telegramModel, dbModel, contextHelper }) => {
@@ -23,21 +24,7 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
 
     if (!text && !contact) return;
 
-    let userData = await dbModel.getUserData(user_id);
-
-    if (!userData) {
-      userData = telegramModel.toUserData({ from });
-      await dbModel.addUser(userData);
-    }
-
-    const quest = await dbModel.getQuest();
-    const progress = await dbModel.getQuestProgress(user_id, quest.id);
-
-    const context = {
-      userData,
-      quest,
-      progress,
-    };
+    const context = createContext(message);
 
     if (entities) {
       const consumed = entities
@@ -47,12 +34,14 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
       if (consumed) return;
     }
 
-    if (userData.current_question_id) {
+    if (context.userData.current_question_id) {
       const questionAnswered = await handleAnswer(message, context);
 
       if (!questionAnswered) return;
 
-      if (canAskQuestions(context)) {
+      if (shouldChangeQuest(context)) {
+        await handleNewQuest(message, context);
+      } else if (canAskQuestions(context)) {
         await askNextQuestion(context);
       } else {
         await finalizeQuest(context);
@@ -62,6 +51,41 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
     }
 
     console.timeEnd('handleUpdate');
+  }
+
+  function shouldChangeQuest(context) { // todo: move to helpers
+    return getCurrentQuestion(context).type === QUESTION_TYPE.GOTO;
+  }
+
+  async function handleNewQuest(message, context) {
+    const questId = +getCurrentQuestion(context).payload;
+    const { userData } = context;
+
+    userData.current_quest_id = questId;
+    userData.current_question_id = 0;
+
+    await dbModel.setUserData(userData);
+
+    return await startQuest({}, createContext(message));
+  }
+
+  async function createContext({ from }) {
+    const user_id = from.id;
+    let userData = await dbModel.getUserData(user_id);
+
+    if (!userData) {
+      userData = telegramModel.toUserData({ from });
+      await dbModel.addUser(userData);
+    }
+
+    const quest = await dbModel.getQuest(userData.current_quest_id);
+    const progress = await dbModel.getQuestProgress(user_id, quest.id);
+
+    return {
+      userData,
+      quest,
+      progress,
+    };
   }
 
   async function askNextQuestion(context) {
@@ -90,6 +114,7 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
     const currentQuestion = getCurrentQuestion(context);
 
     switch (currentQuestion.type) {
+      case QUESTION_TYPE.GOTO:
       case QUESTION_TYPE.SELECT:
         const options = await dbModel.getQuestionOptions(current_question_id);
         const matchingOption = options.find(option => text === option.text);
@@ -98,8 +123,9 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
 
           currentQuestion.option_id = matchingOption.id;
           currentQuestion.is_correct = matchingOption.is_correct;
+          currentQuestion.payload = matchingOption.payload;
 
-          return dbModel.addQuestionAnswer({
+          dbModel.addQuestionAnswer({
             user_id,
             quest_id: current_quest_id,
             question_id: current_question_id,
@@ -226,6 +252,8 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
       telegramModel.sendMessage(userData.user_id, render(quest.start_text, context), telegramModel.contactRequestKeyboard()),
       dbModel.setUserData(userData),
     ]);
+
+    return askNextQuestion(context); // todo: remove if not working properly
 
     return askQuestion(userData.user_id, question, context);
   }

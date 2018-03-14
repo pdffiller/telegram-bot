@@ -1,4 +1,4 @@
-
+.npmrc
 .idea/
 npm-debug.log
 consul-template

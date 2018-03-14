@@ -30,6 +30,10 @@ module.exports = ({ config, indexRoute, webHookRoute, apiRoute}) => {
     res.status(200).send(`OK, ${process.env.BUILD_ID}`);
   });
 
+  app.get('/config', (req, res) => {
+    res.send(JSON.stringify(config));
+  });
+
   // catch 404 and forward to error handler
   app.use(function(req, res, next) {
     const err = new Error('Not Found');

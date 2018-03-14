@@ -19,6 +19,7 @@ module.exports = {
   },
 
   getUpdates: {
+    enabled: false,
     interval: 1000,
   },
 

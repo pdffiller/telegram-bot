@@ -17,6 +17,14 @@ module.exports = ({ config, logger }) => {
 
   async function getQuest(id) {
     const sql = 'select * from `quests` where ' +
+      (!id ? '`id` = ?' : '`is_default` = true');
+
+    const quests = await query(sql, [id]);
+    return quests.pop();
+  }
+
+  async function setQuest(id) {
+    const sql = 'select * from `quests` where ' +
       (id !== undefined ? '`id` = ?' : '`is_default` = true');
 
     const quests = await query(sql, [id]);
@@ -66,7 +74,7 @@ module.exports = ({ config, logger }) => {
   }
 
   function getQuestProgress(user_id, quest_id) {
-    const sql = 'select qq.*, qa.option_id, qo.is_correct, qa.text_answer from quest_questions as qq ' +
+    const sql = 'select qq.*, qa.option_id, qo.is_correct, qo.payload, qa.text_answer from quest_questions as qq ' +
       'left join question_answers as qa on qq.id = qa.question_id and qa.user_id = ? ' +
       'left join question_options as qo on qa.option_id = qo.id and qq.id = qo.question_id ' +
       'where qq.quest_id = ? order by qq.order asc';
