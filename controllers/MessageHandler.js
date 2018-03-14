@@ -253,7 +253,7 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
       dbModel.setUserData(userData),
     ]);
 
-    return askNextQuestion(context); // todo: remove if not working properly
+    // return askNextQuestion(context); // todo: remove if not working properly
 
     return askQuestion(userData.user_id, question, context);
   }
