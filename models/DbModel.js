@@ -104,5 +104,6 @@ module.exports = ({ config, logger }) => {
     clearUserProgress,
     getQuestProgress,
     getQuestResults,
+    query,
   };
 };

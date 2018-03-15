@@ -13,10 +13,15 @@ module.exports = ({ dbModel }) => {
   async function setProgress({ user_id, current_quest_id, current_question_id }) {
     return dbModel.setUserData({ user_id, current_quest_id, current_question_id });
   }
+  
+  async function query(sql, values = []) {
+    return dbModel.query(sql, values);
+  }
 
   return {
     getQuestResults,
     addQuestionAnswer,
     setProgress,
+    query,
   };
 };
