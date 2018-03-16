@@ -17,7 +17,7 @@ module.exports = ({ config, logger }) => {
 
   async function getQuest(id) {
     const sql = 'select * from `quests` where ' +
-      (!id ? '`id` = ?' : '`is_default` = true');
+      (id ? '`id` = ?' : '`is_default` = true');
 
     const quests = await query(sql, [id]);
     return quests.pop();
@@ -54,7 +54,16 @@ module.exports = ({ config, logger }) => {
     const userData  = _.pick(info, ['user_id', 'first_name', 'last_name', 'username', 'current_quest_id', 'current_question_id']);
     return query('insert into `telegram_users` set ?', userData);
   }
-  
+
+  async function addQuestion(question, options) {
+    const { insertId } = await query('insert into `quest_questions` set ?', question);
+    if (options && options.length) {
+      return Promise.all(options.map(op => query(
+        'insert into `question_options` set ?', _.set(op, 'question_id', insertId)
+      )))
+    }
+  }
+
   function getQuestionOptions(question_id) {
     const sql = 'select * from `question_options` where ?';
     return query(sql, { question_id });
@@ -93,6 +102,15 @@ module.exports = ({ config, logger }) => {
     return _.groupBy(allAnswers, 'user_id');
   }
   
+  async function createQuestion({ quest_id, order, question_text, type, is_required }) {
+    
+  }
+  
+  async function createQuestionAnswer() {
+    
+  }
+  
+  
   return {
     getQuestionOptions,
     getQuestions,
@@ -104,6 +122,7 @@ module.exports = ({ config, logger }) => {
     clearUserProgress,
     getQuestProgress,
     getQuestResults,
+    addQuestion,
     query,
   };
 };

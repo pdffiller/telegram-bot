@@ -32,12 +32,16 @@ module.exports = ({ config }) => {
   }
 
   function sendMessage(chat_id, text, reply_markup) {
-    return axios
-      .post(apiRequestUrl('sendMessage'), {
-        chat_id,
-        text,
-        reply_markup
-      })
+    try {
+      return axios
+        .post(apiRequestUrl('sendMessage'), {
+          chat_id,
+          text,
+          reply_markup
+        })
+    } catch (e) {
+      console.log(e.toString());
+    }
   }
 
   function toUserData({ from }, current_quest_id = 0, current_question_id = 0) {

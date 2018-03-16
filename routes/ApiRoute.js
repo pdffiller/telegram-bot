@@ -37,6 +37,15 @@ module.exports = ({ restController }) => {
     res.send(`ok`);
   });
 
+  router.post('/addQuestion', async (req, res) => {
+    try {
+      await restController.addQuestion(req.body.question, req.body.options);
+      res.send(`ok`);
+    } catch (e) {
+      res.send(e.toString());
+    }
+  });
+
   router.post('/query', async (req, res) => {
     const { sql, values } = req.body;
     

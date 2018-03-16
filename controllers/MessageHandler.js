@@ -24,7 +24,7 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
 
     if (!text && !contact) return;
 
-    const context = createContext(message);
+    const context = await createContext(message);
 
     if (entities) {
       const consumed = entities
@@ -47,7 +47,7 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
         await finalizeQuest(context);
       }
     } else {
-      telegramModel.sendMessage(user_id, render(quest.help_text, context));
+      telegramModel.sendMessage(user_id, render(context.quest.help_text, context));
     }
 
     console.timeEnd('handleUpdate');
@@ -66,7 +66,7 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
 
     await dbModel.setUserData(userData);
 
-    return await startQuest({}, createContext(message));
+    return await startQuest({}, await createContext(message));
   }
 
   async function createContext({ from }) {
@@ -125,7 +125,7 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
           currentQuestion.is_correct = matchingOption.is_correct;
           currentQuestion.payload = matchingOption.payload;
 
-          dbModel.addQuestionAnswer({
+          return dbModel.addQuestionAnswer({
             user_id,
             quest_id: current_quest_id,
             question_id: current_question_id,
@@ -249,7 +249,9 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
     userData.current_question_id = question.id;
 
     await Promise.all([
-      telegramModel.sendMessage(userData.user_id, render(quest.start_text, context), telegramModel.contactRequestKeyboard()),
+      quest.start_text.length
+        ? telegramModel.sendMessage(userData.user_id, render(quest.start_text, context))
+        : Promise.resolve(),
       dbModel.setUserData(userData),
     ]);
 
@@ -261,6 +263,7 @@ module.exports = ({ telegramModel, dbModel, contextHelper }) => {
   async function askQuestion(user_id, question, context) {
     let keyboard;
     switch (question.type) {
+      case QUESTION_TYPE.GOTO:
       case QUESTION_TYPE.SELECT:
         const options = await dbModel.getQuestionOptions(question.id);
         keyboard = telegramModel.keyboardFromOptions(options);

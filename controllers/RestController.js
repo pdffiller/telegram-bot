@@ -10,6 +10,10 @@ module.exports = ({ dbModel }) => {
     return dbModel.addQuestionAnswer(_.pick(answerData, ['user_id', 'quest_id', 'question_id', 'option_id', 'text_answer']));
   }
 
+  async function addQuestion(question, options = []) {
+    return dbModel.addQuestion(question, options);
+  }
+
   async function setProgress({ user_id, current_quest_id, current_question_id }) {
     return dbModel.setUserData({ user_id, current_quest_id, current_question_id });
   }
@@ -22,6 +26,7 @@ module.exports = ({ dbModel }) => {
     getQuestResults,
     addQuestionAnswer,
     setProgress,
+    addQuestion,
     query,
   };
 };
