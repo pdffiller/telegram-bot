@@ -5,7 +5,7 @@ module.exports = ({ dbModel }) => {
   async function getQuestResults(quest_id, min_correct = 0) {
     const data = await dbModel.getQuestResults(quest_id);
 
-    return _.map(data, answers => {
+    const users = _.map(data, answers => {
       const user = {
         correct: 0,
       };
@@ -20,6 +20,11 @@ module.exports = ({ dbModel }) => {
 
       return user;
     }).filter(u => u.correct >= +min_correct);
+
+    return {
+      total: users.length,
+      users,
+    }
   }
 
   async function addQuestionAnswer(answerData) {
