@@ -19,7 +19,10 @@ module.exports = ({ dbModel }) => {
       });
 
       return user;
-    }).filter(u => u.correct >= +min_correct);
+    }).filter(u => u.correct >= +min_correct).map((item, index) => {
+      item.index = index;
+      return item;
+    });
 
     return {
       total: users.length,
