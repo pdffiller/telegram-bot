@@ -2,8 +2,24 @@ const _ = require('lodash');
 
 module.exports = ({ dbModel }) => {
 
-  async function getQuestResults(quest_id) {
-    return dbModel.getQuestResults(quest_id);
+  async function getQuestResults(quest_id, min_correct = 0) {
+    const data = await dbModel.getQuestResults(quest_id);
+
+    return _.map(data, answers => {
+      const user = {
+        correct: 0,
+      };
+
+      answers.forEach(a => {
+        if (a.type === 'select') {
+          user.correct += a.is_correct;
+        } else {
+          user[a.type] = a.text_answer || a.option_text;
+        }
+      });
+
+      return user;
+    }).filter(u => u.correct >= +min_correct);
   }
 
   async function addQuestionAnswer(answerData) {

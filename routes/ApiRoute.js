@@ -5,11 +5,11 @@ const router = express.Router();
 
 module.exports = ({ restController }) => {
   router.get('/getQuestResults', async (req, res) => {
-    const { quest_id } = req.query;
+    const { quest_id, min_correct = 0 } = req.query;
 
     if (!quest_id) return res.send('no quest_id');
 
-    const questResults = await restController.getQuestResults(quest_id);
+    const questResults = await restController.getQuestResults(quest_id, min_correct);
     res.send(questResults);
   });
 
