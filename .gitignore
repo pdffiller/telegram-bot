@@ -7,3 +7,4 @@ log/*.json
 node_modules/
 
 config/local.js*
+data.json
