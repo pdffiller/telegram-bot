@@ -1,13 +1,14 @@
 const express = require('express');
 const path = require('path');
-const favicon = require('serve-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const sassMiddleware = require('node-sass-middleware');
+const { sequelize } = require('./models');
 
 module.exports = ({ config, indexRoute, webHookRoute, apiRoute}) => {
   const app = express();
+  sequelize.sync({ force: false });
 
   // view engine setup
   app.set('views', path.join(__dirname, 'views'));

@@ -1,34 +1,8 @@
 const ejs = require('ejs');
 const _ = require('lodash');
 
-module.exports = () => {
-
-  function canAskOptionalQuestions(context) {
-    let questionsAnswered = 0;
-    let questionsLeft = context.quest.max_questions;
-    let requiredQuestionsLeft = 0;
-    let optionalQuestionsLeft = 0;
-
-    context.progress.forEach(({ option_id, text_answer, is_required }) => {
-      if (option_id || text_answer) {
-        questionsAnswered += 1;
-        questionsLeft -= 1;
-      } else if (is_required) {
-        requiredQuestionsLeft += 1;
-      } else {
-        optionalQuestionsLeft += 1;
-      }
-    });
-
-    const currentQuestion = getCurrentQuestion(context);
-    const nextQuestion = context.progress.find((question, i, arr) => arr[i-1] && arr[i-1].id === context.userData.current_question_id);
-    const nextRequiredQuestion = getNextRequiredQuestion(context);
-
-    const canAskOptionalQuestion = (!nextRequiredQuestion || !nextQuestion || !nextQuestion.is_required || !currentQuestion.is_required)
-      && questionsLeft - requiredQuestionsLeft > 0 && optionalQuestionsLeft > 0;
-
-    return canAskOptionalQuestion;
-  }
+module.exports = ({ constants }) => {
+  const { GROUP, GOTO } = constants.QUESTION_TYPE;
 
   function ejsContext({ progress }) {
     return {
@@ -46,28 +20,80 @@ module.exports = () => {
   }
 
   function canAskQuestions(context) {
-    const answeredQuestions = context.progress.filter(({ option_id, text_answer }) => option_id || text_answer).length;
-    return answeredQuestions < context.quest.max_questions && answeredQuestions < context.progress.length;
+    return !!getNextQuestion(context)
   }
 
-  function getNextRequiredQuestion(context) {
-    return context.progress.find(({ option_id, text_answer, is_required }) => is_required && !option_id && !text_answer);
+  function getNextQuestion(context) {
+    const question = context.user.Question;
+    const questions = context.questions;
+    const answers = context.user.Answers;
+
+    if (question && question.parentId) {
+      const parentQuestion = _.first(questions, { id: question.parentId });
+      if (!isGroupQuestionAnswered(parentQuestion, context)) return parentQuestion;
+    }
+
+    const availableQuestions = questions.filter(q => {
+      if (q.parentId || _.some(answers, { questionId: q.id })) return false;
+
+      if (q.type === GROUP) {
+        return !isGroupQuestionAnswered(q, context);
+      }
+
+      return true;
+    });
+
+    return _.first(availableQuestions);
+  }
+
+  function isGroupQuestionAnswered(groupQuestion, context) {
+    const questions = context.questions;
+    const answers = context.user.Answers;
+
+    const groupQuestionIds = _.map(getGroupQuestions(groupQuestion, questions), 'id');
+    const readyAnswers = _.filter(answers, a => groupQuestionIds.includes(a.questionId));
+    const questionReady = groupQuestion.limit
+      ? groupQuestion.limit <= readyAnswers.length
+      : groupQuestionIds.length <= readyAnswers.length;
+
+    return questionReady;
+  }
+
+  function getGroupQuestions(parentQuestion, allQuestions) {
+    return _.filter(allQuestions, { parentId: parentQuestion.id });
   }
 
   function getCurrentQuestion(context) {
     return context.progress.find(({ id }) => id === context.userData.current_question_id);
   }
 
-  function hasProgress(context) {
-    return context.progress.some(q => q.text_answer || q.option_id);
+  function getRandomGroupQuestion(questionGroup, context) {
+    const answeredIds = _.map(context.user.Answers, 'questionId');
+    const availableQuestions = questionGroup.filter(q => !answeredIds.includes(q.id));
+
+    if (availableQuestions.length === 0) return null;
+
+    const randomIndex = Math.floor(Math.random() * availableQuestions.length);
+
+    return availableQuestions[randomIndex];
+  }
+
+  function shouldSendGroupText(questionGroup, context) {
+    const answeredIds = _.map(context.user.Answers, 'questionId');
+    return !questionGroup.some(q => answeredIds.includes(q.id));
+  }
+
+  function shouldChangeQuest(context) {
+    return context.user.Question.type === GOTO;
   }
 
   return {
     canAskQuestions,
-    canAskOptionalQuestions,
     getCurrentQuestion,
-    getNextRequiredQuestion,
-    hasProgress,
+    getNextQuestion,
+    getRandomGroupQuestion,
+    shouldChangeQuest,
+    shouldSendGroupText,
     render,
   }
 };

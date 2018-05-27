@@ -31,10 +31,11 @@ module.exports = {
   },
 
   mysql: {
-    host: 'docker',
-    user: 'root',
+    host: '0.0.0.0',
+    dialect: 'mysql',
+    username: 'root',
     password: 'root',
-    database: 'pdffiller_quests'
+    database: 'tg_new'
   },
 
   logger: {

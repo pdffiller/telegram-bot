@@ -1,5 +1,6 @@
 const axios = require('axios');
 const _ = require('lodash');
+const models = require('./index');
 
 module.exports = ({ config }) => {
 
@@ -52,7 +53,29 @@ module.exports = ({ config }) => {
     return userData;
   }
 
+  async function findOrCreateUser(data) {
+    const { id: telegramId, username } = data;
+    const user = await models.User.findOne({
+      where: { telegramId },
+      include: [{
+        association: 'Answers',
+        include: ['Question'],
+      }, {
+        association: 'Question',
+        include: ['Quest'],
+      }]
+    });
+    if (user) {
+      return user;
+    }
+    await models.User.create({
+      telegramId, username
+    });
+    return await findOrCreateUser(data);
+  }
+
   return {
+    findOrCreateUser,
     getUpdates,
     sendMessage,
     keyboardFromOptions,
