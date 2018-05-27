@@ -1,8 +1,9 @@
 module.exports = {
   apps: [
     {
-      name: 'chat-service',
-      script: 'bin/www'
+      name: 'telegram-bot-service',
+      script: 'bin/www',
+      max_memory_restart: '128M',
     }
   ]
 };
