@@ -8,3 +8,5 @@ node_modules/
 
 config/local.js*
 data.json
+
+tmp
