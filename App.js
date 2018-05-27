@@ -3,7 +3,6 @@ const path = require('path');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const sassMiddleware = require('node-sass-middleware');
 const { sequelize } = require('./models');
 
 module.exports = ({ config, indexRoute, webHookRoute, apiRoute}) => {
@@ -20,7 +19,6 @@ module.exports = ({ config, indexRoute, webHookRoute, apiRoute}) => {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(cookieParser());
-  app.use(sassMiddleware(config.sassMiddleware));
   app.use(express.static(path.join(__dirname, 'public')));
 
   app.use('/', indexRoute);
