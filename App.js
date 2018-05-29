@@ -24,6 +24,7 @@ module.exports = ({ config, indexRoute, webHookRoute, apiRoute}) => {
   app.use('/', indexRoute);
   app.use('/api', apiRoute);
   app.use('/handleUpdate', webHookRoute);
+  app.use('/api/message', webHookRoute);
 
   app.use('/status', (req, res) => {
     res.status(200).send(`OK, ${process.env.BUILD_ID}`);
