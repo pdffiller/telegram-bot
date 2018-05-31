@@ -9,6 +9,8 @@ module.exports = ({ telegramModel, dbModel, contextHelper, constants }) => {
   async function handleUpdate(message) {
     let context;
 
+    console.log(message);
+    
     console.time('handleUpdate');
     try {
       const { text, entities, contact } = message;
