@@ -250,7 +250,7 @@ module.exports = ({ telegramModel, dbModel, contextHelper, constants }) => {
         const text = await models.getText('error_no_questions');
         if (text) telegramModel.sendMessage(context.user.telegramId, render(text, context));
         break;
-      default: telegramModel.sendMessage(context.user.telegramId, `Error: ${e.toString()}`)
+      default: telegramModel.sendMessage(context.user.telegramId, `Error: ${e.toString()}\n ${e.stack}`)
     }
   }
 
