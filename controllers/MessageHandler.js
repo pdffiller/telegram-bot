@@ -63,6 +63,7 @@ module.exports = ({ telegramModel, dbModel, contextHelper, constants }) => {
 
   async function createContext(message) {
     const user = await telegramModel.findOrCreateUser(message.from);
+    const stats = {};
     let quest = null;
     let questions = null;
     if (user.Question) {
@@ -70,10 +71,21 @@ module.exports = ({ telegramModel, dbModel, contextHelper, constants }) => {
       questions = await models.Question.findAll({ where: { questId: quest.id }, order: [['order', 'ASC']]});
     }
 
+    if (user.Answers) {
+      const options = _.filter(user.Answers, 'Option');
+      const correct = _.filter(options, 'isCorrect').length;
+      stats.answers = {
+        total: options.length,
+        correct,
+        incorrect: options.length - correct,
+      }
+    }
+
     return {
       user,
       questions,
       quest,
+      stats,
       message,
     };
   }
