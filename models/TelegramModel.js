@@ -70,7 +70,7 @@ module.exports = ({ config }) => {
       where: { telegramId },
       include: [{
         association: 'Answers',
-        include: ['Question'],
+        include: ['Question', 'Option'],
       }, {
         association: 'Question',
         include: ['Quest'],
