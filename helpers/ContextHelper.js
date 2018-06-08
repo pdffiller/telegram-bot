@@ -49,20 +49,12 @@ module.exports = ({ constants }) => {
   function getAnsweredQuestions(context) {
     if (!context.questions || !_.get(context, 'user.Answers')) return [];
 
-    const questions = context.questions;
-    const answers = context.user.Answers;
-
-    return _(questions)
-      .filter(q => _.some(answers, { questionId: q.id }))
-      .map(q => {
-        const answer = _.first(answers, { questionId: q.id });
-        const option = q.type === SELECT && _.first(q.Options, { id: answer.optionId });
-        return {
-          ..._.pick(q, ['text', 'name', 'type']),
-          answer,
-          option,
-        }
-      })
+    return _(context.user.Answers)
+      .map(answer => ({
+        ..._.pick(answer.Question, ['text']),
+        option: answer.Option,
+        answer
+      }))
       .value();
   }
 
