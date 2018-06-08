@@ -79,6 +79,8 @@ module.exports = ({ telegramModel, dbModel, contextHelper, constants }) => {
 
     context.answeredQuestions = getAnsweredQuestions(context);
 
+    console.log(context);
+
     return context;
   }
 
