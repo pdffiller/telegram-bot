@@ -43,5 +43,5 @@ module.exports = {
   },
 
   botId: '<bot_id>',
-
+  sendInterval: 800,
 };
