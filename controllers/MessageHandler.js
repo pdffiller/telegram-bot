@@ -3,7 +3,7 @@ const models = require('../models');
 
 module.exports = ({ telegramModel, dbModel, contextHelper, constants }) => {
 
-  const { render, canAskQuestions, getNextQuestion, getRandomGroupQuestion, getCurrentQuestion, shouldChangeQuest, shouldSendGroupText } = contextHelper;
+  const { render, canAskQuestions, getAnsweredQuestions, getNextQuestion, getRandomGroupQuestion, getCurrentQuestion, shouldChangeQuest, shouldSendGroupText } = contextHelper;
   const { QUESTION_TYPE, COMMAND, ERROR } = constants;
 
   async function handleUpdate(message) {
@@ -70,12 +70,16 @@ module.exports = ({ telegramModel, dbModel, contextHelper, constants }) => {
       questions = await models.Question.findAll({ where: { questId: quest.id }, order: [['order', 'ASC']]});
     }
 
-    return {
+    const context = {
       user,
       questions,
       quest,
       message,
     };
+
+    context.answeredQuestions = getAnsweredQuestions(context);
+
+    return context;
   }
 
   function getDefaultQuest() {

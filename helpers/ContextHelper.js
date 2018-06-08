@@ -2,7 +2,7 @@ const ejs = require('ejs');
 const _ = require('lodash');
 
 module.exports = ({ constants }) => {
-  const { GROUP, GOTO } = constants.QUESTION_TYPE;
+  const { GROUP, GOTO, SELECT } = constants.QUESTION_TYPE;
 
   function ejsContext({ progress }) {
     return {
@@ -44,6 +44,26 @@ module.exports = ({ constants }) => {
     });
 
     return _.first(availableQuestions);
+  }
+
+  function getAnsweredQuestions(context) {
+    if (!context.questions || !_.get(context, 'user.Answers')) return [];
+
+    const questions = context.questions;
+    const answers = context.user.Answers;
+
+    return _(questions)
+      .filter(q => _.some(answers, { questionId: q.id }))
+      .map(q => {
+        const answer = _.first(answers, { questionId: q.id });
+        const option = q.type === SELECT && _.first(q.Options, { id: answer.optionId });
+        return {
+          ..._.pick(q, ['text', 'name', 'type']),
+          answer,
+          option,
+        }
+      })
+      .value();
   }
 
   function isGroupQuestionAnswered(groupQuestion, context) {
@@ -94,6 +114,7 @@ module.exports = ({ constants }) => {
     getRandomGroupQuestion,
     shouldChangeQuest,
     shouldSendGroupText,
+    getAnsweredQuestions,
     render,
   }
 };
