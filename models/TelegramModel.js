@@ -38,7 +38,7 @@ module.exports = ({ config }) => {
   async function sendMessage(chat_id, text, reply_markup) {
     const { sendInterval } = config;
     const now = Date.now();
-    timings[chat_id] = timings[chat_id] || now;
+    timings[chat_id] = timings[chat_id] || 0;
     const timeFromLastSend = now - timings[chat_id];
     if (timeFromLastSend < sendInterval) {
       await wait(sendInterval - timeFromLastSend)

@@ -6,7 +6,8 @@
     "start": "node ./bin/www",
     "csv": "node csv.js",
     "test": "mocha test",
-    "reset": "node scripts/flushDb.js; mocha test/create.js"
+    "reset": "node scripts/flushDb.js; mocha test/create.js",
+    "server:update": "git pull && pm2 restart telegram-bot-service"
   },
   "dependencies": {
     "async": "^2.5.0",
