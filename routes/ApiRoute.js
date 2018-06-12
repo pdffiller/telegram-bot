@@ -1,6 +1,6 @@
 const express = require('express');
 const _ = require('lodash');
-const { Quest, Question, Option, Text } = require('../models');
+const { Quest, Question, Option, Text, Answer } = require('../models');
 
 
 module.exports = ({ restController }) => {
@@ -29,6 +29,29 @@ module.exports = ({ restController }) => {
     const { questId } = req.params;
     const data = await Quest.update(req.body, {
       where: { id: questId }
+    });
+    res.send(data);
+  });
+
+
+  /**
+   * ANSWERS API
+   */
+  router.get('/answers/:questId', async (req, res) => {
+    const { questId } = req.params;
+    const data = await Answer.findAll({
+      where: { questId },
+      order: [['id', 'DESC']],
+      attributes: ['text', 'userId', 'timing', 'id'],
+      include: [{
+        association: 'Option',
+        attributes: ['isCorrect', 'text'],
+        include: ['Question', 'Option'],
+      }, {
+        association: 'Question',
+        attributes: ['name', 'type'],
+        include: ['Quest'],
+      }],
     });
     res.send(data);
   });
@@ -129,7 +152,6 @@ module.exports = ({ restController }) => {
     });
     res.send(data);
   });
-
 
   router.options('/*', (req, res) => {
     res.set('Access-Control-Allow-Methods', 'GET, POST, DELETE');
