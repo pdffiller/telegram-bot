@@ -46,11 +46,9 @@ module.exports = ({ restController }) => {
       include: [{
         association: 'Option',
         attributes: ['isCorrect', 'text'],
-        include: ['Question', 'Option'],
       }, {
         association: 'Question',
         attributes: ['name', 'type'],
-        include: ['Quest'],
       }],
     });
     res.send(data);
