@@ -6,6 +6,7 @@ const COMMAND = {
 
 const ERROR = keymirror({
   QUEST_NOT_FOUND: null,
+  QUEST_DISABLED: null,
   NO_QUESTIONS_IN_QUEST: null,
 });
 

@@ -19,6 +19,15 @@ module.exports = ({ telegramModel, dbModel, contextHelper, constants }) => {
 
       context = await createContext(message);
 
+      if (context.quest) {
+
+        if (!context.quest.isEnabled) {
+          const err = new Error(ERROR.QUEST_DISABLED);
+          err.userMessage = context.quest.disabledText;
+          throw err;
+        }
+      }
+
       if (entities) {
         const results = await Promise.all(
           entities
@@ -78,8 +87,6 @@ module.exports = ({ telegramModel, dbModel, contextHelper, constants }) => {
     };
 
     context.answeredQuestions = getAnsweredQuestions(context);
-
-    console.log(context);
 
     return context;
   }
@@ -186,6 +193,12 @@ module.exports = ({ telegramModel, dbModel, contextHelper, constants }) => {
           : { where: { isDefault: true }}
         );
 
+    if (quest && !quest.isEnabled) {
+      const err =  new Error(ERROR.QUEST_DISABLED);
+      err.userMessage = quest.disabledText;
+      throw err;
+    }
+
     if (user.Answers.length) {
 
       if (user.Question && canAskQuestions(context)) {
@@ -252,6 +265,12 @@ module.exports = ({ telegramModel, dbModel, contextHelper, constants }) => {
 
   async function handleError(e, context) {
     switch (e.message) {
+      case ERROR.QUEST_DISABLED:
+        const message = e.userMessage || context.quest.disabledText;
+        if (message) {
+          telegramModel.sendMessage(context.user.telegramId, message)
+        }
+        break;
       case ERROR.NO_QUESTIONS_IN_QUEST:
         const text = await models.getText('error_no_questions');
         if (text) telegramModel.sendMessage(context.user.telegramId, render(text, context));

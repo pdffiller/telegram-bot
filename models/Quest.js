@@ -7,9 +7,11 @@ const Quest = sequelize.define('quest', {
   endText: Sequelize.STRING,
   helpText: Sequelize.STRING,
   retryText: Sequelize.STRING,
+  disabledText: Sequelize.STRING,
   errorText: Sequelize.STRING,
   timeoutText: Sequelize.STRING,
   isDefault: Sequelize.BOOLEAN,
+  isEnabled: Sequelize.BOOLEAN,
 }, { timestamps: false });
 
 module.exports = Quest;
