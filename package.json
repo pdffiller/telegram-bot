@@ -10,6 +10,10 @@
     "server:update": "git pull && pm2 restart telegram-bot-service"
   },
   "dependencies": {
+    "@types/cookie-parser": "^1.4.1",
+    "@types/express": "^4.16.1",
+    "@types/morgan": "^1.7.35",
+    "@types/node": "^11.13.4",
     "async": "^2.5.0",
     "awilix": "^2.8.2",
     "axios": "^0.16.2",
@@ -26,7 +30,7 @@
     "morgan": "~1.8.1",
     "mysql": "^2.15.0",
     "mysql2": "^1.5.3",
-    "request": "latest",
+    "request-promise": "^4.2.2",
     "sequelize": "^4.37.6",
     "serve-favicon": "~2.4.2",
     "winston": "^2.4.0"

@@ -6,10 +6,12 @@ module.exports = ({ telegramModel, dbModel, contextHelper, constants }) => {
   const { render, canAskQuestions, getAnsweredQuestions, getNextQuestion, getRandomGroupQuestion, getCurrentQuestion, shouldChangeQuest, shouldSendGroupText } = contextHelper;
   const { QUESTION_TYPE, COMMAND, ERROR } = constants;
 
+  /**
+   * @method handleUpdate - main update handler for project
+   * @param  {Object} message
+   */
   async function handleUpdate(message) {
     let context;
-
-    console.log(message);
     
     console.time('handleUpdate');
     try {

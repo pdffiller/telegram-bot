@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 
-var app = require('../Container').resolve('app');
+var app = require('app');
 var debug = require('debug')('pdffiller-telegram-chat:server');
 var http = require('http');
 

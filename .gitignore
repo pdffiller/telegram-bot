@@ -2,6 +2,7 @@
 .idea/
 npm-debug.log
 consul-template
+build
 
 log/*.json
 node_modules/
@@ -10,3 +11,7 @@ config/local.js*
 data.json
 
 tmp
+data
+
+.DS_Store
+
