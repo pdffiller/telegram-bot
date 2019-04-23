@@ -8,6 +8,7 @@ class Answer extends Model<Answer> {
   @Column userId: number;
   @Column questId: number;
   @Column questionId: number;
+  @Column optionId: number;
 }
 
 // const sequelize = require('./sequelize');
