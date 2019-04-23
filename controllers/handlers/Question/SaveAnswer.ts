@@ -5,11 +5,7 @@ import Question from '../../../db/models/Question';
 import questionHelper from "../../../helpers/QuestionHelper";
 import Answer from '../../../db/models/Answer';
 import CodedError, { CODE } from '../../../models/CodedError';
-
-interface AnswerData {
-  optionId?: number;
-  text?: string;
-}
+import Option from '../../../db/models/Option';
 
 export default class SaveAnswer implements IDbMessageHandler {
   async handle(message: Message, context: Context) {
@@ -40,13 +36,20 @@ export default class SaveAnswer implements IDbMessageHandler {
     return null;
   }
 
-  async saveAnswer(question: Question, data: AnswerData, context: Context) {
-    const answer = await Answer.create({
+  async saveAnswer(question: Question, textOrOption: string | Option, context: Context) {
+    const answerData = {
       questId: question.questId,
       questionId: question.id,
       userId: context.user.id,
-      ...data,
-    })
+      text: textOrOption instanceof String ? textOrOption : null,
+      optionId: textOrOption instanceof Option ? textOrOption.id : null,
+    };
+
+    const answer = await Answer.create(answerData);
+
+    if (context.options && textOrOption instanceof Option) {
+      context.options.push(textOrOption);
+    }
 
     if (context.answers) context.answers.push(answer)
   }
@@ -62,7 +65,7 @@ export default class SaveAnswer implements IDbMessageHandler {
 
     if (!matchingOption) throw new CodedError(CODE.OPTION_NOT_VALID);
 
-    return this.saveAnswer(question, { optionId: matchingOption.id }, context);
+    return this.saveAnswer(question, matchingOption, context);
   }
 
   handleEmailQuestion(question: Question, message: Message, context: Context) {
@@ -72,18 +75,18 @@ export default class SaveAnswer implements IDbMessageHandler {
     if (!emailEntity || !message.text) throw new CodedError(CODE.EMAIL_MISSING);
     const text = message.text.substr(emailEntity.offset, emailEntity.length);
 
-    return this.saveAnswer(question, { text }, context);
+    return this.saveAnswer(question, text, context);
   }
 
   handleTextQuestion(question: Question, message: Message, context: Context) {
     if (!message.text) throw new CodedError(CODE.TEXT_MISSING);
 
-    return this.saveAnswer(question, { text: message.text }, context);
+    return this.saveAnswer(question, message.text, context);
   }
 
   handleContactQuestion(question: Question, message: Message, context: Context) {
     if (!message.contact) throw new CodedError(CODE.CONTACT_MISSING);
 
-    return this.saveAnswer(question, { text: message.contact.phone_number }, context);
+    return this.saveAnswer(question, message.contact.phone_number, context);
   }
 }

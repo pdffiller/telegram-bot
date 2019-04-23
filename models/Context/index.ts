@@ -4,6 +4,8 @@ import User from '../../db/models/User'
 import Answer from '../../db/models/Answer'
 import Quest from '../../db/models/Quest'
 import Question from '../../db/models/Question'
+import Option from '../../db/models/Option';
+import { Op } from 'sequelize';
 
 export default class Context {
 
@@ -12,6 +14,7 @@ export default class Context {
     public quest: Quest | null,
     public questions: Question[] | null,
     public answers: Answer[] | null,    
+    public options: Option[] | null,
   ) {}
 
   static async build (tgUser: TGUser) {
@@ -28,11 +31,15 @@ export default class Context {
           Question.findAll({ where: { questId }}),
           Answer.findAll({ where: { questId, userId: user.id }})
         ]);
-        return new Context(user, quest, questions, answers);
+
+        const optionIds = answers.filter(a => a.optionId).map(a => a.optionId);
+        const options = await Option.findAll({ where: { id: { [Op.in]: optionIds }}});
+        
+        return new Context(user, quest, questions, answers, options);
       }
     }
 
-    return new Context(user, null, null, null);
+    return new Context(user, null, null, null, null);
   }
 
   get currentQuestion(): Question | null {
