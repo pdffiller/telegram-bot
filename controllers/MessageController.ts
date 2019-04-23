@@ -21,7 +21,12 @@ export default class MessageController {
 
       for (let i = 0; i < replies.length; i++) {
         const r = replies[i];
-        const text = ejs.render(r.text, dbContext);
+        let text = r.text;
+        try {
+          text = ejs.render(r.text, dbContext);
+        } catch (e) {
+          console.error(e);
+        }
         await telegram.sendMessage(r.chat_id, text, r.extra)
       }
     } else {
