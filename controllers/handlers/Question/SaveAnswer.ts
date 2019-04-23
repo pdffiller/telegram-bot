@@ -41,7 +41,7 @@ export default class SaveAnswer implements IDbMessageHandler {
       questId: question.questId,
       questionId: question.id,
       userId: context.user.id,
-      text: textOrOption instanceof String ? textOrOption : null,
+      text: typeof textOrOption === 'string' ? textOrOption : null,
       optionId: textOrOption instanceof Option ? textOrOption.id : null,
     };
 
