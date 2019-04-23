@@ -18,7 +18,7 @@ export default class Context {
     const defaults = _.pick(tgUser, ['first_name', 'last_name', 'username']); 
     const telegramId = tgUser.id;
     const [user] = await User.findOrCreate({ where: { telegramId }, defaults});
-    if (user.questionId !== null) {
+    if (user.questionId) {
       const question: Question | null = await Question.findOne({ where: { id: user.questionId }, attributes: ['questId']})
 
       if (question !== null) {
