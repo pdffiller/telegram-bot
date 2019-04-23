@@ -1,10 +1,13 @@
 import Telegraf from 'telegraf'
+import config from 'config';
 import MessageController from './controllers/MessageController'
 import { Message } from 'telegram-typings';
 import db from './db';
 
 const messageController = new MessageController;
-const bot = new Telegraf('464061584:AAHCeBTW9568P3WjrH3xwby0t6gtbU8Dftg') // TODO: move to config
+console.log('CONFIG', config);
+
+const bot = new Telegraf(config.botId) // TODO: move to config
 
 // bot.start((ctx) => ctx.reply('Welcome!'))
 bot.help((ctx) => ctx.reply('Send me a sticker'))

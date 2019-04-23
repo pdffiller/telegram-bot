@@ -8,6 +8,8 @@ declare class MySQLConfig {
 
 declare class Config {
   mysql: MySQLConfig;
+
+  botId: string;
 }
 
 declare module 'config' {

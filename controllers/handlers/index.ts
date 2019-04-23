@@ -8,10 +8,13 @@ import IDbMessageHandler from "./IDbMessageHandler";
 import ErrorReplies from "../../models/ErrorReplies";
 import Finish from "./Flow/Finish";
 import CodedError from "../../models/CodedError";
+import Idle from "./Flow/Idle";
 
 export default class MessageHandler {
 
   protected HANDLERS_LIST: IDbMessageHandler[] = [
+    new Idle(),
+
     /**
     * COMMAND HANDLERS - collection of all message handlers for text messages.
     * These handle /start, /help, etc.
