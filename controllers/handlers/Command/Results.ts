@@ -24,7 +24,7 @@ export default class Results implements IDbMessageHandler {
             attributes: ['isCorrect', 'text']
           },{
             model: Question,
-            attributes: ['text']
+            attributes: ['name']
           }]
         });
 
