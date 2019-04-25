@@ -9,8 +9,6 @@
       "request": "attach",
       "name": "Bot (telegraf)",
       "port": 9229,
-      "address": "localhost",
-      "localRoot": "${workspaceFolder}",
       "restart": true
     }
   ]

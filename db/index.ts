@@ -1,7 +1,6 @@
 import {Sequelize, SequelizeOptions} from 'sequelize-typescript';
 import config from 'config';
 
-console.log(config.mysql);
 
 
 const dbConfig = {

@@ -10,6 +10,7 @@ import Finish from "./Flow/Finish";
 import CodedError from "../../models/CodedError";
 import Idle from "./Flow/Idle";
 import Enabled from "./Flow/Enabled";
+import Results from "./Command/Results";
 
 export default class MessageHandler {
 
@@ -22,6 +23,7 @@ export default class MessageHandler {
     * These handle /start, /help, etc.
     */
     new Start(),
+    new Results(),
 
     /**
     * QUESTION HANDLERS - collection of all message handlers for text messages.

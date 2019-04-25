@@ -1,4 +1,6 @@
-import { Table, Column, Model } from 'sequelize-typescript'
+import { Table, Column, Model, ForeignKey, BelongsTo } from 'sequelize-typescript'
+import Option from './Option';
+import Question from './Question';
 
 @Table({ tableName: 'answers' })
 class Answer extends Model<Answer> {
@@ -7,8 +9,20 @@ class Answer extends Model<Answer> {
 
   @Column userId: number;
   @Column questId: number;
-  @Column questionId: number;
+  
+  @ForeignKey(() => Option)
   @Column optionId: number;
+
+  @BelongsTo(() => Option)
+  option: Option;
+
+
+  @ForeignKey(() => Question)
+  @Column questionId: number;
+
+  @BelongsTo(() => Question)
+  question: Question;
+
 }
 
 // const sequelize = require('./sequelize');

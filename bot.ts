@@ -5,7 +5,6 @@ import { Message } from 'telegram-typings';
 import db from './db';
 
 const messageController = new MessageController;
-console.log('CONFIG', config);
 
 const bot = new Telegraf(config.botId) // TODO: move to config
 
