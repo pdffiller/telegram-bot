@@ -2,7 +2,7 @@ import { CODE } from './CodedError'
 import Context from './Context';
 
 let ERROR_REPLIES:{[index:number]: string} = {
-  [CODE.QUEST_DISABLED]: 'викторина выключена',
+  [CODE.QUEST_DISABLED]: 'ой, кажется время вышло',
   [CODE.QUEST_HAS_NO_QUESTIONS]: 'в викторине нет вопросов',
   [CODE.QUEST_IN_PROGRESS]: 'кажется ты уже и так на пол пути к успеху',
   [CODE.QUEST_NOT_FOUND]: 'ой, я ничего не нашел',

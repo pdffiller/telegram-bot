@@ -37,7 +37,7 @@ export default class Start implements IDbMessageHandler {
     const quest = await Quest.findOne({ where: { isDefault: true }});
 
     if (quest === null) throw new CodedError(CODE.QUEST_NOT_FOUND);
-    if (!quest.isEnabled) throw new CodedError(CODE.QUEST_DISABLED);
+    if (!quest.isEnabled) throw new CodedError(CODE.QUEST_DISABLED); // todo: move to Enabled.ts
 
     const answersCount = await Answer.count({ where: { userId: user.id, questId: quest.id }});
     if (answersCount > 0) throw new CodedError(CODE.QUEST_VISITED)

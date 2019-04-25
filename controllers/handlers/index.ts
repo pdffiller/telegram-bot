@@ -9,11 +9,13 @@ import ErrorReplies from "../../models/ErrorReplies";
 import Finish from "./Flow/Finish";
 import CodedError from "../../models/CodedError";
 import Idle from "./Flow/Idle";
+import Enabled from "./Flow/Enabled";
 
 export default class MessageHandler {
 
   protected HANDLERS_LIST: IDbMessageHandler[] = [
     new Idle(),
+    new Enabled(),
 
     /**
     * COMMAND HANDLERS - collection of all message handlers for text messages.
