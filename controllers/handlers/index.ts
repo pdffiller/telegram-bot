@@ -7,12 +7,14 @@ import ReplyMessage from "../../models/ReplyMessage";
 import Context from "../../models/Context";
 import IDbMessageHandler from "./IDbMessageHandler";
 import ErrorReplies from "../../models/ErrorReplies";
-import Finish from "./Flow/Finish";
 import CodedError from "../../models/CodedError";
 import Idle from "./Flow/Idle";
 import Enabled from "./Flow/Enabled";
 import Results from "./Command/Results";
 import SpreadSheetModel from "../../models/SpreadSheetModel";
+import FinishToSpreadSheet from "./Flow/FinishToSpreadSheet";
+
+const spreadSheetModel = new SpreadSheetModel(config.spreadSheets.credentialsPath, config.spreadSheets.tokenPath);
 
 export default class MessageHandler {
 
@@ -30,7 +32,7 @@ export default class MessageHandler {
     * These handle /start, /help, etc.
     */
     new Start(),
-    new Results(new SpreadSheetModel(config.spreadSheets.credentialsPath, config.spreadSheets.tokenPath)),
+    new Results(spreadSheetModel),
 
     /**
     * QUESTION HANDLERS - collection of all message handlers for text messages.
@@ -44,7 +46,7 @@ export default class MessageHandler {
     */
     new AskNext(),
 
-    new Finish(),
+    new FinishToSpreadSheet(spreadSheetModel),
   ];
 
   async handle(message: Message, context: Context): Promise<ReplyMessage[]> {

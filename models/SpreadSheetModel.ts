@@ -87,14 +87,14 @@ export default class SpreadSheetModel {
     });
   }
 
-  addRowsToTable(spreadsheetId: string, rows: string[][]): Promise<GaxiosResponse | null> {
+  addRowsToTable(spreadsheetId: string, range: string, rows: string[][]): Promise<GaxiosResponse | null> {
     const request = {
       // The ID of the spreadsheet to update.
       spreadsheetId,
   
       // The A1 notation of a range to search for a logical table of data.
       // Values will be appended after the last row of the table.
-      range: 'Sheet1',
+      range,
   
       // How the input data should be interpreted.
       valueInputOption: 'USER_ENTERED',  // TODO: Update placeholder value.

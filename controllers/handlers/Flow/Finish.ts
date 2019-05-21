@@ -7,7 +7,7 @@ import ReplyMessage from "../../../models/ReplyMessage";
 
 export default class Finish implements IDbMessageHandler {
   async handle(message: Message, context: Context) {
-    const { quest, user } = context
+    const { quest, user } = context;
     if (quest && this.allQuestionsAnswered(context)) {
 
       await user.update({ questionId: null });

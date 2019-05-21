@@ -13,6 +13,7 @@ class Quest extends Model<Quest> {
   @Column isDefault: boolean;
   @Column isEnabled: boolean;
   @Column spreadsheetId: string;
+  @Column spreadsheetRange: string;
 }
 
 // const sequelize = require('./sequelize');

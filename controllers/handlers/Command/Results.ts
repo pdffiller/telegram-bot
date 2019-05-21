@@ -35,7 +35,7 @@ export default class Results implements IDbMessageHandler {
         const questions = await Question.findAll({ where: { questId, parentId: null}, order: [['order', 'ASC']]})
 
         if (!quest) throw new CodedError(CODE.QUEST_NOT_FOUND);
-        if (!quest.spreadsheetId) throw new CodedError(CODE.SPREADSHEET_MISSING);
+        if (!quest.spreadsheetId || !quest.spreadsheetRange) throw new CodedError(CODE.SPREADSHEET_MISSING);
 
         const groupedAnswers = (await this.getAllAnswers(questId))
           .map(collection => collection.map(answer => {
@@ -50,7 +50,7 @@ export default class Results implements IDbMessageHandler {
           groupedAnswers.unshift(questionNames);
 
           try {
-            await this.spreadSheetModel.addRowsToTable(quest.spreadsheetId, groupedAnswers);
+            await this.spreadSheetModel.addRowsToTable(quest.spreadsheetId, quest.spreadsheetRange, groupedAnswers);
           } catch (err) {
             return new ReplyCollection(true, [new ReplyMessage(context.user.telegramId, err.message)]);
           }

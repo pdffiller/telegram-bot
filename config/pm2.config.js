@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'telegram-bot-service',
+      name: 'telegram-bot',
       script: 'build/bot.js',
       watch: './build',
 
