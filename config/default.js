@@ -10,5 +10,10 @@ module.exports = {
     database: 'tg_new'
   },
 
+  spreadSheets: {
+    credentialsPath: './credentials.json',
+    tokenPath: './token.json',
+  },
+
   botId: '<bot_id>',
 };

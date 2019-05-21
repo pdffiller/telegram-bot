@@ -12,6 +12,7 @@ class Quest extends Model<Quest> {
   @Column timeoutText: string;
   @Column isDefault: boolean;
   @Column isEnabled: boolean;
+  @Column spreadsheetId: string;
 }
 
 // const sequelize = require('./sequelize');

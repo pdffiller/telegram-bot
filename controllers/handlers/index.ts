@@ -1,4 +1,5 @@
 import { Message } from "telegram-typings";
+import config from "config";
 import Start from "./Command/Start";
 import SaveAnswer from "./Question/SaveAnswer";
 import AskNext from "./Question/AskNext";
@@ -11,11 +12,17 @@ import CodedError from "../../models/CodedError";
 import Idle from "./Flow/Idle";
 import Enabled from "./Flow/Enabled";
 import Results from "./Command/Results";
+import SpreadSheetModel from "../../models/SpreadSheetModel";
 
 export default class MessageHandler {
 
   protected HANDLERS_LIST: IDbMessageHandler[] = [
+
+    /**
+     * Show help message if message is without commands 
+     */
     new Idle(),
+
     new Enabled(),
 
     /**
@@ -23,7 +30,7 @@ export default class MessageHandler {
     * These handle /start, /help, etc.
     */
     new Start(),
-    new Results(),
+    new Results(new SpreadSheetModel(config.spreadSheets.credentialsPath, config.spreadSheets.tokenPath)),
 
     /**
     * QUESTION HANDLERS - collection of all message handlers for text messages.

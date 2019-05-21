@@ -36,18 +36,22 @@ export default class SaveAnswer implements IDbMessageHandler {
     return null;
   }
 
+  protected isOption(textOrOption: string | Option): textOrOption is Option {
+    return textOrOption instanceof Option;
+  }
+
   async saveAnswer(question: Question, textOrOption: string | Option, context: Context) {
     const answerData = {
       questId: question.questId,
       questionId: question.id,
       userId: context.user.id,
-      text: typeof textOrOption === 'string' ? textOrOption : null,
-      optionId: textOrOption instanceof Option ? textOrOption.id : null,
+      text: this.isOption(textOrOption) ? null : textOrOption,
+      optionId: this.isOption(textOrOption) ? textOrOption.id : null,
     };
 
     const answer = await Answer.create(answerData);
 
-    if (context.options && textOrOption instanceof Option) {
+    if (context.options && this.isOption(textOrOption)) {
       context.options.push(textOrOption);
     }
 

@@ -28,7 +28,7 @@ export default class Context {
         const { questId } = question;
         const [quest, questions, answers] = await Promise.all([
           Quest.findOne({ where: { id: questId }}),
-          Question.findAll({ where: { questId }}),
+          Question.findAll({ where: { questId }, order: [['order', 'ASC']]}),
           Answer.findAll({ where: { questId, userId: user.id }})
         ]);
 

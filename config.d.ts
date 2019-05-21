@@ -6,9 +6,14 @@ declare class MySQLConfig {
   database: string;
 }
 
+declare class SpreadSheetsConfig {
+  credentialsPath: string;
+  tokenPath: string;
+}
+
 declare class Config {
   mysql: MySQLConfig;
-
+  spreadSheets: SpreadSheetsConfig;
   botId: string;
 }
 

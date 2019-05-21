@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
+    "start": "node --inspect=9229 ./build/bot.js",
     "csv": "node csv.js",
     "test": "mocha test",
     "reset": "node scripts/flushDb.js; mocha test/create.js",
@@ -21,6 +21,7 @@
     "awilix": "^2.8.2",
     "config": "^1.26.2",
     "ejs": "^2.6.1",
+    "googleapis": "^39.2.0",
     "lodash": "^4.17.11",
     "mysql": "^2.15.0",
     "mysql2": "^1.5.3",

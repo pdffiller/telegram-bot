@@ -11,7 +11,8 @@ let ERROR_REPLIES:{[index:number]: string} = {
   [CODE.EMAIL_MISSING]: 'это не почта!',
   [CODE.TEXT_MISSING]: 'это не ответ!',
   [CODE.CONTACT_MISSING]: 'ты не отправил контакт',
-  [CODE.NOTHING_IN_PROGRESS]: 'хм, мне нечего тебе сказать. Попробуй /start'
+  [CODE.NOTHING_IN_PROGRESS]: 'хм, мне нечего тебе сказать. Попробуй /start',
+  [CODE.SPREADSHEET_MISSING]: 'ты не прикрепил таблицу',
 }
 
 class ErrorReply {
