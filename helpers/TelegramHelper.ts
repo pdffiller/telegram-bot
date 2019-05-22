@@ -22,7 +22,7 @@ class TelegramHelper {
   }
 
   nameKeyboard(user: User) {
-    const { last_name, first_name } = user;
+    const { last_name = '', first_name = '' } = user;
     const text = `${last_name} ${first_name}`.trim();
     const keyboard = [[{ text }]];
     const extra: ExtraEditMessage = {};
