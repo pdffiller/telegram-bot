@@ -18,7 +18,11 @@ export default class Context {
   ) {}
 
   static async build (tgUser: TGUser) {
-    const defaults = _.pick(tgUser, ['first_name', 'last_name', 'username']); 
+    const defaults = {
+      first_name: tgUser.first_name || null,
+      last_name: tgUser.last_name || null,
+      username: tgUser.username || null,
+    };
     const telegramId = tgUser.id;
     const [user] = await User.findOrCreate({ where: { telegramId }, defaults});
     if (user.questionId) {
