@@ -1,4 +1,5 @@
 import { Table, Column, Model, BeforeUpdate, BeforeCreate } from 'sequelize-typescript';
+import sequelize from 'sequelize'
 
 @Table({ tableName: 'users' })
 class User extends Model<User> {
@@ -22,11 +23,11 @@ class User extends Model<User> {
 
   @Column telegramId: number;
 
-  @Column first_name: string | null;
+  @Column(sequelize.STRING) first_name: string | null;
   
-  @Column last_name: string | null;
+  @Column(sequelize.STRING) last_name: string | null;
 
-  @Column username: string | null;
+  @Column(sequelize.STRING) username: string | null;
 
   @Column company: string;
 
