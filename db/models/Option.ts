@@ -1,10 +1,11 @@
-import { Table, Column, Model } from 'sequelize-typescript'
+import { Table, Column, Model } from "sequelize-typescript";
 
-@Table({ tableName: 'options', timestamps: false })
+@Table({ tableName: "options", timestamps: false })
 class Option extends Model<Option> {
   @Column isCorrect: boolean;
   @Column text: string;
   @Column payload: string;
+  @Column questId: number;
 }
 
 // const sequelize = require('./sequelize');
