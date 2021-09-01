@@ -2,17 +2,17 @@ import { CODE } from './CodedError'
 import Context from './Context';
 
 let ERROR_REPLIES:{[index:number]: string} = {
-  [CODE.QUEST_DISABLED]: 'ой, кажется время вышло',
-  [CODE.QUEST_HAS_NO_QUESTIONS]: 'в викторине нет вопросов',
-  [CODE.QUEST_IN_PROGRESS]: 'кажется ты уже и так на пол пути к успеху',
-  [CODE.QUEST_NOT_FOUND]: 'ой, я ничего не нашел',
-  [CODE.QUEST_VISITED]: 'кажется, ты уже тут отвечал. Второй раз не получится.',
-  [CODE.OPTION_NOT_VALID]: 'этого варианта тут нет',
-  [CODE.EMAIL_MISSING]: 'это не почта!',
-  [CODE.TEXT_MISSING]: 'это не ответ!',
-  [CODE.CONTACT_MISSING]: 'ты не отправил контакт',
-  [CODE.NOTHING_IN_PROGRESS]: 'хм, мне нечего тебе сказать. Попробуй /start',
-  [CODE.SPREADSHEET_MISSING]: 'ты не прикрепил таблицу',
+  [CODE.QUEST_DISABLED]: 'час вікторини сплинув',
+  [CODE.QUEST_HAS_NO_QUESTIONS]: 'у вікторині немає питань',
+  [CODE.QUEST_IN_PROGRESS]: 'краще спершу закінчити те, що ти вже роспочав',
+  [CODE.QUEST_NOT_FOUND]: 'ой, я нічого не знайшов',
+  [CODE.QUEST_VISITED]: 'здаеться ти вже приймав участь. Вдруге не вийде',
+  [CODE.OPTION_NOT_VALID]: 'цього варіанту тут немає',
+  [CODE.EMAIL_MISSING]: 'це не схоже на пошту!',
+  [CODE.TEXT_MISSING]: 'це не відповідь!',
+  [CODE.CONTACT_MISSING]: 'ти не відправив контакт (треба натиснути кнопку)',
+  [CODE.NOTHING_IN_PROGRESS]: 'Спробуй /start',
+  [CODE.SPREADSHEET_MISSING]: 'ты не прікріпив таблицю',
 }
 
 class ErrorReply {
