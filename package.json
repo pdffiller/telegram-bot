@@ -10,7 +10,7 @@
     "server:update": "git pull && pm2 restart telegram-bot-service"
   },
   "dependencies": {
-    "async": "^2.5.0",
+    "async": "^3.2.2",
     "awilix": "^2.8.2",
     "axios": "^0.16.2",
     "body-parser": "~1.17.1",
