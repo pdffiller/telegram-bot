@@ -14,7 +14,7 @@
     "awilix": "^2.8.2",
     "axios": "^0.16.2",
     "body-parser": "~1.17.1",
-    "config": "^1.26.2",
+    "config": "^1.31.0",
     "cookie-parser": "~1.4.3",
     "csv": "^1.1.1",
     "debug": "~2.6.3",
